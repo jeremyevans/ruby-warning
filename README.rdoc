@@ -1,0 +1,68 @@
+= ruby-warning
+
+ruby-warning adds custom processing for warnings, including the
+ability to ignore specific warning messages, ignore warnings
+in specific files/directories, and add custom handling for all
+warnings in specific files/directories.
+
+ruby-warning requires ruby 2.4+, as previous versions of ruby do
+not support custom processing of warnings.
+
+= Installation
+
+  gem install warning
+
+= Source Code
+
+Source code is available on GitHub at https://github.com/jeremyevans/ruby-warning
+
+= Usage 
+
+By default, requiring the library does not make changes to how ruby processes
+warnings, it just adds methods that allow you to customize the processing.
+
+<tt>Warning.ignore</tt> takes a regexp and optionally a path prefix, and ignores
+any warning that matches the regular expression if it starts with the path
+prefix.
+
+<tt>Warning.process</tt> takes an optional path prefix and a block, and if the
+warning string starts with the path prefix, it calls the block with the warning
+string instead of performing the default behavior. You can call
+<tt>Warning.process</tt> multiple times and it will operate intelligently,
+choosing the longest path prefix that the string starts with.
+
+<tt>Warning.clear</tt> just clears the current ignored warnings and warning
+processors.
+
+By using path prefixes, it's fairly easy for a gem to set that specific warnings
+should be ignored inside the gem's directory.
+
+Note that path prefixes will not correctly handle warnings raised by
+<tt>Kernel#warn</tt>, unless the warning message given to <tt>Kernel#warn</tt>
+starts with the filename where the warning is used.
+
+= Examples
+
+  # Ignore all uninitialized instance variable warnings
+  Warning.ignore(/instance variable @\w+ not initialized/)
+
+  # Ignore all uninitialized instance variable warnings in current file
+  Warning.ignore(/instance variable @\w+ not initialized/, __FILE__)
+
+  # Write warning to LOGGER at level warning
+  Warning.process do |warning|
+    LOGGER.warning(warning)
+  end
+
+  # Write warnings in the current file to LOGGER at level error
+  Warning.process(__FILE__) do |warning|
+    LOGGER.error(warning)
+  end
+
+= License
+
+MIT
+
+= Author
+
+Jeremy Evans <code@jeremyevans.net>

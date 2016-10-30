@@ -2,6 +2,12 @@ require 'monitor'
 
 module Warning
   module Processor
+    # Map of symbols to regexps for warning messages to ignore.
+    IGNORE_MAP = {
+      uninitialized_instance_variable: /: warning: instance variable @.+ not initialized\n\z/,
+      method_redefined: /: warning: method redefined; discarding old .+\n\z|: warning: previous definition of .+ was here\n\z/
+    }
+
     # Clear all current ignored warnings and warning processors.
     def clear
       synchronize do
@@ -11,14 +17,28 @@ module Warning
     end
     
     # Ignore any warning messages matching the given regexp, if they
-    # start with the given path. Examples:
+    # start with the given path.
+    # The regexp can also be one of the following symbols, which will
+    # use an appropriate regexp for the given warning:
+    #
+    # :uninitialized_instance_variable :: Ignore warning messages for accesses to instance variables
+    #                                     that have not yet been initialized
+    # :method_redefined :: Ignore warning messages when defining a method in a class/module where a
+    #                      method of the same name was already defined in that class/module.
+    #
+    # Examples:
     #
     #   # Ignore all uninitialized instance variable warnings
     #   Warning.ignore(/instance variable @\w+ not initialized/)
     #
     #   # Ignore all uninitialized instance variable warnings in current file
     #   Warning.ignore(/instance variable @\w+ not initialized/, __FILE__)
+    #
+    #   # Ignore all uninitialized instance variable warnings in current file
+    #   Warning.ignore(:uninitialized_instance_variable, __FILE__)
     def ignore(regexp, path='')
+      regexp = IGNORE_MAP.fetch(regexp) if regexp.is_a?(Symbol)
+
       synchronize do 
         @ignore << [path, regexp]
       end

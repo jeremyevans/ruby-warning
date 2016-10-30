@@ -1,4 +1,3 @@
-require 'minitest/unit'
 require 'minitest/autorun'
 
 class WarningTest < Minitest::Test
@@ -41,13 +40,13 @@ class WarningTest < Minitest::Test
   def test_warning_ignore
     obj = Object.new
 
-    assert_warning /instance variable @ivar not initialized/ do
+    assert_warning(/instance variable @ivar not initialized/) do
       assert_nil(obj.instance_variable_get(:@ivar))
     end
 
     require 'warning'
 
-    assert_warning /instance variable @ivar not initialized/ do
+    assert_warning(/instance variable @ivar not initialized/) do
       assert_nil(obj.instance_variable_get(:@ivar))
     end
 
@@ -57,7 +56,7 @@ class WarningTest < Minitest::Test
       assert_nil(obj.instance_variable_get(:@ivar))
     end
 
-    assert_warning /instance variable @ivar2 not initialized/ do
+    assert_warning(/instance variable @ivar2 not initialized/) do
       assert_nil(obj.instance_variable_get(:@ivar2))
     end
 
@@ -67,20 +66,38 @@ class WarningTest < Minitest::Test
       assert_nil(obj.instance_variable_get(:@ivar2))
     end
 
-    assert_warning /instance variable @ivar3 not initialized/ do
+    assert_warning(/instance variable @ivar3 not initialized/) do
       assert_nil(obj.instance_variable_get(:@ivar3))
     end
 
     Warning.ignore(/instance variable @ivar3 not initialized/, __FILE__+'a')
 
-    assert_warning /instance variable @ivar3 not initialized/ do
+    assert_warning(/instance variable @ivar3 not initialized/) do
       assert_nil(obj.instance_variable_get(:@ivar3))
     end
 
     Warning.clear
 
-    assert_warning /instance variable @ivar not initialized/ do
+    assert_warning(/instance variable @ivar not initialized/) do
       assert_nil(obj.instance_variable_get(:@ivar))
+    end
+
+    Warning.ignore(:uninitialized_instance_variable, __FILE__)
+
+    assert_warning '' do
+      assert_nil(obj.instance_variable_get(:@ivar))
+    end
+
+    def self.a; end
+
+    assert_warning(/method redefined; discarding old a.+previous definition of a was here/m) do
+      def self.a; end
+    end
+
+    Warning.ignore(:method_redefined, __FILE__)
+
+    assert_warning '' do
+      def self.a; end
     end
   ensure
     Warning.clear
@@ -96,7 +113,7 @@ class WarningTest < Minitest::Test
       warn = [0, warning]
     end
 
-    assert_warning /instance variable @ivar not initialized/ do
+    assert_warning(/instance variable @ivar not initialized/) do
       assert_nil(obj.instance_variable_get(:@ivar))
     end
     assert_nil(warn)
@@ -136,7 +153,7 @@ class WarningTest < Minitest::Test
 
     Warning.clear
 
-    assert_warning /instance variable @ivar5 not initialized/ do
+    assert_warning(/instance variable @ivar5 not initialized/) do
       assert_nil(obj.instance_variable_get(:@ivar5))
     end
     assert_nil(warn)

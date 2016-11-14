@@ -1,5 +1,7 @@
 === HEAD
 
+* Add support for :fixnum and :bignum as regexp arguments to Warning.ignore (jeremyevans)
+
 * Add support for array of symbols as regexp argument to Warning.ignore (jeremyevans)
 
 * Add support for :not_reached as regexp argument to Warning.ignore (jeremyevans)

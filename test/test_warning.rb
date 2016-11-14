@@ -113,6 +113,30 @@ class WarningTest < Minitest::Test
 
     Warning.clear
 
+    assert_warning(/warning: constant ::Fixnum is deprecated/m) do
+      ::Fixnum
+    end
+
+    Warning.ignore(:fixnum, __FILE__)
+
+    assert_warning '' do
+      ::Fixnum
+    end
+
+    Warning.clear
+
+    assert_warning(/warning: constant ::Bignum is deprecated/m) do
+      ::Bignum
+    end
+
+    Warning.ignore(:bignum, __FILE__)
+
+    assert_warning '' do
+      ::Bignum
+    end
+
+    Warning.clear
+
     Warning.ignore([:method_redefined, :not_reached], __FILE__)
 
     assert_warning '' do

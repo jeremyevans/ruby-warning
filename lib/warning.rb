@@ -6,7 +6,9 @@ module Warning
     IGNORE_MAP = {
       uninitialized_instance_variable: /: warning: instance variable @.+ not initialized\n\z/,
       method_redefined: /: warning: method redefined; discarding old .+\n\z|: warning: previous definition of .+ was here\n\z/,
-      not_reached: /: warning: statement not reached\n\z/
+      not_reached: /: warning: statement not reached\n\z/,
+      fixnum: /: warning: constant ::Fixnum is deprecated\n\z/,
+      bignum: /: warning: constant ::Bignum is deprecated\n\z/
     }
 
     # Clear all current ignored warnings and warning processors.

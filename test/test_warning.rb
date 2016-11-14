@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'warning'
 
 class WarningTest < Minitest::Test
   module EnvUtil
@@ -43,8 +44,6 @@ class WarningTest < Minitest::Test
     assert_warning(/instance variable @ivar not initialized/) do
       assert_nil(obj.instance_variable_get(:@ivar))
     end
-
-    require 'warning'
 
     assert_warning(/instance variable @ivar not initialized/) do
       assert_nil(obj.instance_variable_get(:@ivar))
@@ -99,6 +98,18 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       def self.a; end
     end
+
+    Warning.clear
+
+    assert_warning(/: warning: statement not reached/m) do
+      instance_eval('def self.b; return; 1 end', __FILE__)
+    end
+
+    Warning.ignore(:not_reached, __FILE__)
+
+    assert_warning '' do
+      instance_eval('def self.c; return; 1 end', __FILE__)
+    end
   ensure
     Warning.clear
   end
@@ -106,8 +117,6 @@ class WarningTest < Minitest::Test
   def test_warning_process
     obj = Object.new
     warn = nil
-
-    require 'warning'
 
     Warning.process(__FILE__+'a') do |warning|
       warn = [0, warning]

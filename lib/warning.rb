@@ -5,7 +5,8 @@ module Warning
     # Map of symbols to regexps for warning messages to ignore.
     IGNORE_MAP = {
       uninitialized_instance_variable: /: warning: instance variable @.+ not initialized\n\z/,
-      method_redefined: /: warning: method redefined; discarding old .+\n\z|: warning: previous definition of .+ was here\n\z/
+      method_redefined: /: warning: method redefined; discarding old .+\n\z|: warning: previous definition of .+ was here\n\z/,
+      not_reached: /: warning: statement not reached\n\z/
     }
 
     # Clear all current ignored warnings and warning processors.

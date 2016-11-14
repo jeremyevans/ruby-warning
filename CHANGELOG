@@ -1,5 +1,7 @@
 === HEAD
 
+* Add support for :not_reached as regexp argument to Warning.ignore (jeremyevans)
+
 * Add support for :uninitialized_instance_variable and :method_redefined as regexp argument to Warning.ignore (jeremyevans)
 
 === 0.9.0 (2016-08-09)

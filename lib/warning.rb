@@ -19,13 +19,14 @@ module Warning
     
     # Ignore any warning messages matching the given regexp, if they
     # start with the given path.
-    # The regexp can also be one of the following symbols, which will
+    # The regexp can also be one of the following symbols (or an array including them), which will
     # use an appropriate regexp for the given warning:
     #
-    # :uninitialized_instance_variable :: Ignore warning messages for accesses to instance variables
-    #                                     that have not yet been initialized
     # :method_redefined :: Ignore warning messages when defining a method in a class/module where a
     #                      method of the same name was already defined in that class/module.
+    # :not_reached :: Ignore statement not reached warnings.
+    # :uninitialized_instance_variable :: Ignore warning messages for accesses to instance variables
+    #                                     that have not yet been initialized
     #
     # Examples:
     #
@@ -37,8 +38,20 @@ module Warning
     #
     #   # Ignore all uninitialized instance variable warnings in current file
     #   Warning.ignore(:uninitialized_instance_variable, __FILE__)
+    #
+    #   # Ignore all uninitialized instance variable and method redefined warnings in current file
+    #   Warning.ignore([:uninitialized_instance_variable, :method_redefined],  __FILE__)
     def ignore(regexp, path='')
-      regexp = IGNORE_MAP.fetch(regexp) if regexp.is_a?(Symbol)
+      case regexp
+      when Regexp
+        # already regexp
+      when Symbol
+        regexp = IGNORE_MAP.fetch(regexp)
+      when Array
+        regexp = Regexp.union(regexp.map{|re| IGNORE_MAP.fetch(re)})
+      else
+        raise TypeError, "first argument to Warning.ignore should be Regexp, Symbol, or Array of Symbols, got #{regexp.inspect}"
+      end
 
       synchronize do 
         @ignore << [path, regexp]

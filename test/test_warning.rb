@@ -110,6 +110,14 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       instance_eval('def self.c; return; 1 end', __FILE__)
     end
+
+    Warning.clear
+
+    Warning.ignore([:method_redefined, :not_reached], __FILE__)
+
+    assert_warning '' do
+      instance_eval('def self.c; return; 1 end', __FILE__)
+    end
   ensure
     Warning.clear
   end

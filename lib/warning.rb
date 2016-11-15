@@ -24,6 +24,8 @@ module Warning
     # The regexp can also be one of the following symbols (or an array including them), which will
     # use an appropriate regexp for the given warning:
     #
+    # :bignum :: Ignore warnings when referencing the ::Bignum constant.
+    # :fixnum :: Ignore warnings when referencing the ::Fixnum constant.
     # :method_redefined :: Ignore warning messages when defining a method in a class/module where a
     #                      method of the same name was already defined in that class/module.
     # :not_reached :: Ignore statement not reached warnings.

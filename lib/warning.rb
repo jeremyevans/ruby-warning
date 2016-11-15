@@ -4,12 +4,13 @@ module Warning
   module Processor
     # Map of symbols to regexps for warning messages to ignore.
     IGNORE_MAP = {
-      uninitialized_instance_variable: /: warning: instance variable @.+ not initialized\n\z/,
-      method_redefined: /: warning: method redefined; discarding old .+\n\z|: warning: previous definition of .+ was here\n\z/,
-      not_reached: /: warning: statement not reached\n\z/,
-      fixnum: /: warning: constant ::Fixnum is deprecated\n\z/,
-      bignum: /: warning: constant ::Bignum is deprecated\n\z/,
       ambiguous_slash: /: warning: ambiguous first argument; put parentheses or a space even after `\/' operator\n\z/,
+      bignum: /: warning: constant ::Bignum is deprecated\n\z/,
+      fixnum: /: warning: constant ::Fixnum is deprecated\n\z/,
+      method_redefined: /: warning: method redefined; discarding old .+\n\z|: warning: previous definition of .+ was here\n\z/,
+      missing_gvar: /: warning: global variable `\$.+' not initialized\n\z/,
+      missing_ivar: /: warning: instance variable @.+ not initialized\n\z/,
+      not_reached: /: warning: statement not reached\n\z/,
       unused_var: /: warning: assigned but unused variable - \w+\n\z/,
     }
 
@@ -31,9 +32,11 @@ module Warning
     # :fixnum :: Ignore warnings when referencing the ::Fixnum constant.
     # :method_redefined :: Ignore warnings when defining a method in a class/module where a
     #                      method of the same name was already defined in that class/module.
+    # :missing_gvar :: Ignore warnings for accesses to global variables
+    #                  that have not yet been initialized
+    # :missing_ivar :: Ignore warnings for accesses to instance variables
+    #                  that have not yet been initialized
     # :not_reached :: Ignore statement not reached warnings.
-    # :uninitialized_instance_variable :: Ignore warnings for accesses to instance variables
-    #                                     that have not yet been initialized
     # :unused_var :: Ignore warnings for unused variables.
     #
     # Examples:
@@ -45,10 +48,10 @@ module Warning
     #   Warning.ignore(/instance variable @\w+ not initialized/, __FILE__)
     #
     #   # Ignore all uninitialized instance variable warnings in current file
-    #   Warning.ignore(:uninitialized_instance_variable, __FILE__)
+    #   Warning.ignore(:missing_ivar, __FILE__)
     #
     #   # Ignore all uninitialized instance variable and method redefined warnings in current file
-    #   Warning.ignore([:uninitialized_instance_variable, :method_redefined],  __FILE__)
+    #   Warning.ignore([:missing_ivar, :method_redefined],  __FILE__)
     def ignore(regexp, path='')
       case regexp
       when Regexp

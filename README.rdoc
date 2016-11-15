@@ -30,8 +30,9 @@ appropriate regexp.  The supported symbols are:
 * :bignum
 * :fixnum
 * :method_redefined
+* :missing_gvar
+* :missing_ivar
 * :not_reached
-* :uninitialized_instance_variable
 * :unused_var
 
 <tt>Warning.process</tt> takes an optional path prefix and a block, and if the
@@ -59,7 +60,7 @@ starts with the filename where the warning is used.
   Warning.ignore(/instance variable @\w+ not initialized/, __FILE__)
 
   # Ignore all uninitialized instance variable warnings in current file
-  Warning.ignore(:uninitialized_instance_variable, __FILE__)
+  Warning.ignore(:missing_ivar, __FILE__)
 
   # Ignore all Fixnum and Bignum warnings in current file
   Warning.ignore([:fixnum, :bignum], __FILE__)

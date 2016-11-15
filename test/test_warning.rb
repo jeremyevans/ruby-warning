@@ -81,10 +81,22 @@ class WarningTest < Minitest::Test
       assert_nil(obj.instance_variable_get(:@ivar))
     end
 
-    Warning.ignore(:uninitialized_instance_variable, __FILE__)
+    Warning.ignore(:missing_ivar, __FILE__)
 
     assert_warning '' do
       assert_nil(obj.instance_variable_get(:@ivar))
+    end
+
+    Warning.clear
+
+    assert_warning(/global variable `\$gvar' not initialized/) do
+      $gvar
+    end
+
+    Warning.ignore(:missing_gvar, __FILE__)
+
+    assert_warning '' do
+      $gvar
     end
 
     def self.a; end

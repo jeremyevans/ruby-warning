@@ -174,6 +174,18 @@ class WarningTest < Minitest::Test
 
     Warning.clear
 
+    assert_warning(/warning: possibly useless use of == in void context/) do
+      instance_eval('1 == 2; true', __FILE__)
+    end
+
+    Warning.ignore(:useless_operator, __FILE__)
+
+    assert_warning '' do
+      instance_eval('1 == 2; true', __FILE__)
+    end
+
+    Warning.clear
+
     Warning.ignore([:method_redefined, :not_reached], __FILE__)
 
     assert_warning '' do

@@ -12,6 +12,7 @@ module Warning
       missing_ivar: /: warning: instance variable @.+ not initialized\n\z/,
       not_reached: /: warning: statement not reached\n\z/,
       unused_var: /: warning: assigned but unused variable - \w+\n\z/,
+      useless_operator: /: warning: possibly useless use of [><!=]+ in void context\n\z/,
     }
 
     # Clear all current ignored warnings and warning processors.
@@ -38,6 +39,8 @@ module Warning
     #                  that have not yet been initialized
     # :not_reached :: Ignore statement not reached warnings.
     # :unused_var :: Ignore warnings for unused variables.
+    # :useless_operator :: Ignore warnings for use of operators such as == and > when the
+    #                      result is not used.
     #
     # Examples:
     #

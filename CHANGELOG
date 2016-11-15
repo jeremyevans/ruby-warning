@@ -1,5 +1,7 @@
 === HEAD
 
+* Add support for :useless_operator as regexp argument to Warning.ignore (jeremyevans)
+
 * Add support for :missing_gvar as regexp argument to Warning.ignore (jeremyevans)
 
 * Add support for :ambiguous_slash and :unused_var as regexp arguments to Warning.ignore (jeremyevans)

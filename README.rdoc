@@ -34,6 +34,7 @@ appropriate regexp.  The supported symbols are:
 * :missing_ivar
 * :not_reached
 * :unused_var
+* :useless_operator
 
 <tt>Warning.process</tt> takes an optional path prefix and a block, and if the
 warning string starts with the path prefix, it calls the block with the warning

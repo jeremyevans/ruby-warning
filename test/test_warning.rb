@@ -38,6 +38,10 @@ class WarningTest < Minitest::Test
     assert(pat === stderr, msg)
   end
 
+  def teardown
+    Warning.clear
+  end
+
   def test_warning_ignore
     obj = Object.new
 
@@ -74,21 +78,23 @@ class WarningTest < Minitest::Test
     assert_warning(/instance variable @ivar3 not initialized/) do
       assert_nil(obj.instance_variable_get(:@ivar3))
     end
+  end
 
+  def test_warning_ignore_missing_ivar
     Warning.clear
 
     assert_warning(/instance variable @ivar not initialized/) do
-      assert_nil(obj.instance_variable_get(:@ivar))
+      assert_nil(instance_variable_get(:@ivar))
     end
 
     Warning.ignore(:missing_ivar, __FILE__)
 
     assert_warning '' do
-      assert_nil(obj.instance_variable_get(:@ivar))
+      assert_nil(instance_variable_get(:@ivar))
     end
+  end
 
-    Warning.clear
-
+  def test_warning_ignore_missing_gvar
     assert_warning(/global variable `\$gvar' not initialized/) do
       $gvar
     end
@@ -98,7 +104,9 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       $gvar
     end
+  end
 
+  def test_warning_ignore_method_redefined
     def self.a; end
 
     assert_warning(/method redefined; discarding old a.+previous definition of a was here/m) do
@@ -110,9 +118,9 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       def self.a; end
     end
+  end
 
-    Warning.clear
-
+  def test_warning_ignore_not_reached
     assert_warning(/: warning: statement not reached/) do
       instance_eval('def self.b; return; 1 end', __FILE__)
     end
@@ -122,9 +130,9 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       instance_eval('def self.c; return; 1 end', __FILE__)
     end
+  end
 
-    Warning.clear
-
+  def test_warning_ignore_fixnum
     assert_warning(/warning: constant ::Fixnum is deprecated/) do
       ::Fixnum
     end
@@ -134,9 +142,9 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       ::Fixnum
     end
+  end
 
-    Warning.clear
-
+  def test_warning_ignore_bignum
     assert_warning(/warning: constant ::Bignum is deprecated/) do
       ::Bignum
     end
@@ -146,9 +154,9 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       ::Bignum
     end
+  end
 
-    Warning.clear
-
+  def test_warning_ignore_ambiguous_slash
     def self.d(re); end
     assert_warning(/warning: ambiguous first argument; put parentheses or a space even after `\/' operator/) do
       instance_eval('d /a/', __FILE__)
@@ -159,9 +167,9 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       instance_eval('d /a/', __FILE__)
     end
+  end
 
-    Warning.clear
-
+  def test_warning_ignore_unused_var
     assert_warning(/warning: assigned but unused variable - \w+/) do
       instance_eval('def self.e; b = 1; 2 end', __FILE__)
     end
@@ -171,9 +179,9 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       instance_eval('def self.f; b = 1; 2 end', __FILE__)
     end
+  end
 
-    Warning.clear
-
+  def test_warning_ignore_useless_operator
     assert_warning(/warning: possibly useless use of == in void context/) do
       instance_eval('1 == 2; true', __FILE__)
     end
@@ -183,16 +191,20 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       instance_eval('1 == 2; true', __FILE__)
     end
+  end
 
-    Warning.clear
+  def test_warning_ignore_symbol_array
+    def self.c; end
+
+    assert_warning(/statement not reached.+method redefined; discarding old c.+previous definition of c was here/m) do
+      instance_eval('def self.c; return; 1 end', __FILE__)
+    end
 
     Warning.ignore([:method_redefined, :not_reached], __FILE__)
 
     assert_warning '' do
       instance_eval('def self.c; return; 1 end', __FILE__)
     end
-  ensure
-    Warning.clear
   end
 
   def test_warning_process
@@ -257,7 +269,5 @@ class WarningTest < Minitest::Test
     end
     assert_equal(4, warn.first)
     assert_match(/instance variable @ivar6 not initialized/, warn.last)
-  ensure
-    Warning.clear
   end
 end

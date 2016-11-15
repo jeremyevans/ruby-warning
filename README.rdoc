@@ -23,7 +23,14 @@ warnings, it just adds methods that allow you to customize the processing.
 
 <tt>Warning.ignore</tt> takes a regexp and optionally a path prefix, and ignores
 any warning that matches the regular expression if it starts with the path
-prefix.
+prefix.  It can also take a symbol or an array of symbols, and will use an
+appropriate regexp.  The supported symbols are:
+
+* :bignum
+* :fixnum
+* :method_redefined
+* :not_reached
+* :uninitialized_instance_variable
 
 <tt>Warning.process</tt> takes an optional path prefix and a block, and if the
 warning string starts with the path prefix, it calls the block with the warning
@@ -48,6 +55,12 @@ starts with the filename where the warning is used.
 
   # Ignore all uninitialized instance variable warnings in current file
   Warning.ignore(/instance variable @\w+ not initialized/, __FILE__)
+
+  # Ignore all uninitialized instance variable warnings in current file
+  Warning.ignore(:uninitialized_instance_variable, __FILE__)
+
+  # Ignore all Fixnum and Bignum warnings in current file
+  Warning.ignore([:fixnum, :bignum], __FILE__)
 
   # Write warning to LOGGER at level warning
   Warning.process do |warning|

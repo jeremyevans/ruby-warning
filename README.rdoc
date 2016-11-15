@@ -26,11 +26,13 @@ any warning that matches the regular expression if it starts with the path
 prefix.  It can also take a symbol or an array of symbols, and will use an
 appropriate regexp.  The supported symbols are:
 
+* :ambiguous_slash
 * :bignum
 * :fixnum
 * :method_redefined
 * :not_reached
 * :uninitialized_instance_variable
+* :unused_var
 
 <tt>Warning.process</tt> takes an optional path prefix and a block, and if the
 warning string starts with the path prefix, it calls the block with the warning

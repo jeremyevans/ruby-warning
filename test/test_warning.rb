@@ -101,7 +101,7 @@ class WarningTest < Minitest::Test
 
     Warning.clear
 
-    assert_warning(/: warning: statement not reached/m) do
+    assert_warning(/: warning: statement not reached/) do
       instance_eval('def self.b; return; 1 end', __FILE__)
     end
 
@@ -113,7 +113,7 @@ class WarningTest < Minitest::Test
 
     Warning.clear
 
-    assert_warning(/warning: constant ::Fixnum is deprecated/m) do
+    assert_warning(/warning: constant ::Fixnum is deprecated/) do
       ::Fixnum
     end
 
@@ -125,7 +125,7 @@ class WarningTest < Minitest::Test
 
     Warning.clear
 
-    assert_warning(/warning: constant ::Bignum is deprecated/m) do
+    assert_warning(/warning: constant ::Bignum is deprecated/) do
       ::Bignum
     end
 
@@ -133,6 +133,31 @@ class WarningTest < Minitest::Test
 
     assert_warning '' do
       ::Bignum
+    end
+
+    Warning.clear
+
+    def self.d(re); end
+    assert_warning(/warning: ambiguous first argument; put parentheses or a space even after `\/' operator/) do
+      instance_eval('d /a/', __FILE__)
+    end
+
+    Warning.ignore(:ambiguous_slash, __FILE__)
+
+    assert_warning '' do
+      instance_eval('d /a/', __FILE__)
+    end
+
+    Warning.clear
+
+    assert_warning(/warning: assigned but unused variable - \w+/) do
+      instance_eval('def self.e; b = 1; 2 end', __FILE__)
+    end
+
+    Warning.ignore(:unused_var, __FILE__)
+
+    assert_warning '' do
+      instance_eval('def self.f; b = 1; 2 end', __FILE__)
     end
 
     Warning.clear

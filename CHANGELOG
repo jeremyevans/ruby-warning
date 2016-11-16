@@ -1,4 +1,4 @@
-=== HEAD
+=== 0.10.0 (2016-11-16)
 
 * Add support for :arg_prefix and :shadow as regexp argument to Warning.ignore (jeremyevans)
 

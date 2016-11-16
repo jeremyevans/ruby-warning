@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s|
   s.name = 'warning'
-  s.version = '0.9.0'
+  s.version = '0.10.0'
   s.platform = Gem::Platform::RUBY
   s.has_rdoc = true
   s.extra_rdoc_files = ["README.rdoc", "CHANGELOG", "MIT-LICENSE"]
@@ -10,7 +10,7 @@ spec = Gem::Specification.new do |s|
   s.author = "Jeremy Evans"
   s.email = "code@jeremyevans.net"
   s.homepage = "https://github.com/jeremyevans/ruby-warning"
-  s.required_ruby_version = ">= 2.4"
+  s.required_ruby_version = "> 2.3.99"
   s.files = %w(MIT-LICENSE CHANGELOG README.rdoc Rakefile) + Dir["{test,lib}/**/*.rb"]
   s.description = <<END
 ruby-warning adds custom processing for warnings, including the

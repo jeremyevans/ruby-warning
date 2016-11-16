@@ -193,6 +193,34 @@ class WarningTest < Minitest::Test
     end
   end
 
+  def test_warning_ignore_arg_prefix
+    assert_warning(/: warning: `\*' interpreted as argument prefix/) do
+      instance_eval('Array *[nil]', __FILE__)
+    end
+
+    assert_warning(/: warning: `&' interpreted as argument prefix/) do
+      instance_eval('tap &proc{}', __FILE__)
+    end
+    Warning.ignore(:arg_prefix, __FILE__)
+
+    assert_warning '' do
+      instance_eval('Array *[nil]', __FILE__)
+      instance_eval('tap &proc{}', __FILE__)
+    end
+  end
+
+  def test_warning_ignore_shadow
+    assert_warning(/warning: shadowing outer local variable - a/) do
+      instance_eval('lambda{|a| lambda{|a|}}', __FILE__)
+    end
+
+    Warning.ignore(:shadow, __FILE__)
+
+    assert_warning '' do
+      instance_eval('lambda{|a| lambda{|a|}}', __FILE__)
+    end
+  end
+
   def test_warning_ignore_symbol_array
     def self.c; end
 

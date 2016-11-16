@@ -26,6 +26,7 @@ any warning that matches the regular expression if it starts with the path
 prefix.  It can also take a symbol or an array of symbols, and will use an
 appropriate regexp.  The supported symbols are:
 
+* :arg_prefix
 * :ambiguous_slash
 * :bignum
 * :fixnum
@@ -33,6 +34,7 @@ appropriate regexp.  The supported symbols are:
 * :missing_gvar
 * :missing_ivar
 * :not_reached
+* :shadow
 * :unused_var
 * :useless_operator
 

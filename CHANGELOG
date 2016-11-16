@@ -1,5 +1,7 @@
 === HEAD
 
+* Add support for :arg_prefix and :shadow as regexp argument to Warning.ignore (jeremyevans)
+
 * Add support for :useless_operator as regexp argument to Warning.ignore (jeremyevans)
 
 * Add support for :missing_gvar as regexp argument to Warning.ignore (jeremyevans)

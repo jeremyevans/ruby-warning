@@ -5,12 +5,14 @@ module Warning
     # Map of symbols to regexps for warning messages to ignore.
     IGNORE_MAP = {
       ambiguous_slash: /: warning: ambiguous first argument; put parentheses or a space even after `\/' operator\n\z/,
+      arg_prefix: /: warning: `[&\*]' interpreted as argument prefix\n\z/,
       bignum: /: warning: constant ::Bignum is deprecated\n\z/,
       fixnum: /: warning: constant ::Fixnum is deprecated\n\z/,
       method_redefined: /: warning: method redefined; discarding old .+\n\z|: warning: previous definition of .+ was here\n\z/,
       missing_gvar: /: warning: global variable `\$.+' not initialized\n\z/,
       missing_ivar: /: warning: instance variable @.+ not initialized\n\z/,
       not_reached: /: warning: statement not reached\n\z/,
+      shadow: /: warning: shadowing outer local variable - \w+\n\z/,
       unused_var: /: warning: assigned but unused variable - \w+\n\z/,
       useless_operator: /: warning: possibly useless use of [><!=]+ in void context\n\z/,
     }
@@ -28,6 +30,7 @@ module Warning
     # The regexp can also be one of the following symbols (or an array including them), which will
     # use an appropriate regexp for the given warning:
     #
+    # :arg_prefix :: Ignore warnings when using * or & as an argument prefix
     # :ambiguous_slash :: Ignore warnings for things like <tt>method /regexp/</tt>
     # :bignum :: Ignore warnings when referencing the ::Bignum constant.
     # :fixnum :: Ignore warnings when referencing the ::Fixnum constant.
@@ -38,8 +41,9 @@ module Warning
     # :missing_ivar :: Ignore warnings for accesses to instance variables
     #                  that have not yet been initialized
     # :not_reached :: Ignore statement not reached warnings.
+    # :shadow :: Ignore warnings related to shadowing outer local variables.
     # :unused_var :: Ignore warnings for unused variables.
-    # :useless_operator :: Ignore warnings for use of operators such as == and > when the
+    # :useless_operator :: Ignore warnings when using operators such as == and > when the
     #                      result is not used.
     #
     # Examples:

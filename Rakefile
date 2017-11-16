@@ -15,11 +15,19 @@ end
 desc "Run test"
 Rake::TestTask.new do |t|
   t.libs.push "lib"
-  t.test_files = FileList['test/test_*.rb']
+  t.test_files = FileList['test/test_warning.rb']
   t.verbose = true
 end
 
-task :default=>:test
+desc "Run test"
+Rake::TestTask.new(:test_freeze) do |t|
+  t.libs.push "lib"
+  t.test_files = FileList['test/test_freeze_warning.rb']
+  t.verbose = true
+end
+
+desc "Run all tests"
+task :default=>[:test, :test_freeze]
 
 ### RDoc
 

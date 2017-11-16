@@ -1,3 +1,7 @@
+=== 0.10.1 (2017-11-16)
+
+* Correctly handle Warning.freeze (jeremyevans)
+
 === 0.10.0 (2016-11-16)
 
 * Add support for :arg_prefix and :shadow as regexp argument to Warning.ignore (jeremyevans)

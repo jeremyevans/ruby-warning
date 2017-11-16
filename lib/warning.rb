@@ -24,6 +24,12 @@ module Warning
         @process.clear
       end
     end
+
+    def freeze
+      @ignore.freeze
+      @process.freeze
+      super
+    end
     
     # Ignore any warning messages matching the given regexp, if they
     # start with the given path.
@@ -117,11 +123,17 @@ module Warning
 
       super
     end
+
+    private
+
+    def synchronize(&block)
+      @monitor.synchronize(&block)
+    end
   end
 
   @ignore = []
   @process = []
+  @monitor = Monitor.new
 
-  extend MonitorMixin
   extend Processor
 end

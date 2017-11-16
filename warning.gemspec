@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s|
   s.name = 'warning'
-  s.version = '0.10.0'
+  s.version = '0.10.1'
   s.platform = Gem::Platform::RUBY
   s.has_rdoc = true
   s.extra_rdoc_files = ["README.rdoc", "CHANGELOG", "MIT-LICENSE"]

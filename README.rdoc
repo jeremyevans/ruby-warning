@@ -78,6 +78,11 @@ starts with the filename where the warning is used.
     LOGGER.error(warning)
   end
 
+  # Ignore all warnings in Gem dependencies
+  Gem.path.each do |path|
+    Warning.ignore(//, path)
+  end
+
 = License
 
 MIT

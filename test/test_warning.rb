@@ -220,7 +220,7 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       instance_eval('lambda{|a| lambda{|a|}}', __FILE__)
     end
-  end
+  end if RUBY_VERSION < '2.6'
 
   def test_warning_ignore_symbol_array
     def self.c; end

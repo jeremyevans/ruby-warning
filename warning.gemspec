@@ -17,4 +17,5 @@ ability to ignore specific warning messages, ignore warnings
 in specific files/directories, and add custom handling for all
 warnings in specific files/directories.
 END
+  s.add_development_dependency "minitest-global_expectations"
 end

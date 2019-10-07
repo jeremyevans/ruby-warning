@@ -54,6 +54,11 @@ Note that path prefixes will not correctly handle warnings raised by
 <tt>Kernel#warn</tt>, unless the warning message given to <tt>Kernel#warn</tt>
 starts with the filename where the warning is used.
 
+Note that many of the warnings this library can ignore are warnings caused
+during compilation (i.e. when files are loaded via require).  You should
+require this library and setup the appropriate warning handling before
+loading any code that could cause warnings.
+
 = Examples
 
   # Ignore all uninitialized instance variable warnings

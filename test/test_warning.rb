@@ -222,6 +222,37 @@ class WarningTest < Minitest::Test
     end
   end if RUBY_VERSION < '2.6'
 
+  def h2kw(**kw)
+  end
+  def kw2h(h, **kw)
+  end
+  def skw(h=1, a: 1)
+  end
+
+  def test_warning_ignore_keyword
+    assert_warning(/warning: The last argument is used as the keyword parameter.*for `h2kw' defined here/m) do
+      h2kw({})
+    end
+    assert_warning(/warning: The keyword argument is passed as the last hash parameter.*for `kw2h' defined here/m) do
+      kw2h(a: 1)
+    end
+    assert_warning(/warning: The last argument is split into positional and keyword parameters.*for `skw' defined here/m) do
+      skw("b" => 1, a: 2)
+    end
+    assert_warning(/warning: The last argument is split into positional and keyword parameters.*for `skw' defined here/m) do
+      skw({"b" => 1, a: 2})
+    end
+
+    Warning.ignore(:keyword_separation, __FILE__)
+
+    assert_warning '' do
+      h2kw({})
+      kw2h(a: 1)
+      skw("b" => 1, a: 2)
+      skw({"b" => 1, a: 2})
+    end
+  end if RUBY_VERSION > '2.7' && RUBY_VERSION < '3'
+
   def test_warning_ignore_symbol_array
     def self.c; end
 

@@ -30,6 +30,7 @@ appropriate regexp.  The supported symbols are:
 * :ambiguous_slash
 * :bignum
 * :fixnum
+* :keyword_separation
 * :method_redefined
 * :missing_gvar
 * :missing_ivar

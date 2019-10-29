@@ -15,6 +15,7 @@ module Warning
       shadow: /: warning: shadowing outer local variable - \w+\n\z/,
       unused_var: /: warning: assigned but unused variable - \w+\n\z/,
       useless_operator: /: warning: possibly useless use of [><!=]+ in void context\n\z/,
+      keyword_separation: /: warning: (?:The last argument is used as the keyword parameter|The keyword argument is passed as the last hash parameter|The last argument is split into positional and keyword parameters|The keyword argument for `.+' is passed as the last hash parameter|The last argument for `.+' is used as the keyword parameter|The last argument for `.+' is split into positional and keyword parameters|for (?:method|`.+') defined here)/,
     }
 
     # Clear all current ignored warnings and warning processors.

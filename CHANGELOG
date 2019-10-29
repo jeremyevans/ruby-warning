@@ -1,5 +1,7 @@
 === master
 
+* Add Warning.dedup for deduplicating warnings (jeremyevans)
+
 * Add support for :keyword_separation as regexp argument to Warning.ignore (jeremyevans)
 
 === 0.10.1 (2017-11-16)

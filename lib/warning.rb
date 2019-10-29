@@ -18,12 +18,21 @@ module Warning
       keyword_separation: /: warning: (?:The last argument is used as the keyword parameter|The keyword argument is passed as the last hash parameter|The last argument is split into positional and keyword parameters|The keyword argument for `.+' is passed as the last hash parameter|The last argument for `.+' is used as the keyword parameter|The last argument for `.+' is split into positional and keyword parameters|for (?:method|`.+') defined here)/,
     }
 
-    # Clear all current ignored warnings and warning processors.
+    # Clear all current ignored warnings, warning processors, and duplicate check cache.
+    # Also disables deduplicating warnings if that is currently enabled.
     def clear
       synchronize do
         @ignore.clear
         @process.clear
+        @dedup = false
       end
+    end
+
+    # Deduplicate warnings, supress warning messages if the same warning message
+    # has already occurred.  Note that this can lead to unbounded memory use
+    # if unique warnings are generated.
+    def dedup
+      @dedup = {}
     end
 
     def freeze
@@ -106,13 +115,22 @@ module Warning
     end
 
     # Handle ignored warnings and warning processors.  If the warning is
-    # not ignored and there is no warning processor setup for the warning
+    # not ignored, is not a duplicate warning (if checking for duplicates)
+    # and there is no warning processor setup for the warning
     # string, then use the default behavior of writing to $stderr.
     def warn(str)
       synchronize{@ignore.dup}.each do |path, regexp|
         if str.start_with?(path) && str =~ regexp
           return
         end
+      end
+
+      if @dedup
+        if synchronize{@dedup[str]}
+          return
+        end
+
+        synchronize{@dedup[str] = true}
       end
 
       synchronize{@process.dup}.each do |path, block|
@@ -134,6 +152,7 @@ module Warning
 
   @ignore = []
   @process = []
+  @dedup = false
   @monitor = Monitor.new
 
   extend Processor

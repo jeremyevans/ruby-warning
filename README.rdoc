@@ -2,8 +2,8 @@
 
 ruby-warning adds custom processing for warnings, including the
 ability to ignore specific warning messages, ignore warnings
-in specific files/directories, and add custom handling for all
-warnings in specific files/directories.
+in specific files/directories, deduplicate warnings, and add
+custom handling for all warnings in specific files/directories.
 
 ruby-warning requires ruby 2.4+, as previous versions of ruby do
 not support custom processing of warnings.
@@ -45,15 +45,22 @@ string instead of performing the default behavior. You can call
 <tt>Warning.process</tt> multiple times and it will operate intelligently,
 choosing the longest path prefix that the string starts with.
 
-<tt>Warning.clear</tt> just clears the current ignored warnings and warning
-processors.
+<tt>Warning.dedup</tt> deduplicates warnings, so that if a warning is received
+that is the same as a warning that has already been processed, the warning is
+ignored. Note that this should be used with care, since if the application
+generates an arbitrary number of unique warnings, that can lead to unbounded
+memory growth.
+
+<tt>Warning.clear</tt> resets the library to its initial state, clearing the
+current ignored warnings and warning processors, and turning off deduplication.
 
 By using path prefixes, it's fairly easy for a gem to set that specific warnings
 should be ignored inside the gem's directory.
 
 Note that path prefixes will not correctly handle warnings raised by
 <tt>Kernel#warn</tt>, unless the warning message given to <tt>Kernel#warn</tt>
-starts with the filename where the warning is used.
+starts with the filename where the warning is used. The <tt>Kernel#warn</tt>
++:uplevel+ option will make sure the warning starts with the filename.
 
 Note that many of the warnings this library can ignore are warnings caused
 during compilation (i.e. when files are loaded via require).  You should
@@ -83,6 +90,9 @@ loading any code that could cause warnings.
   Warning.process(__FILE__) do |warning|
     LOGGER.error(warning)
   end
+
+  # Deduplicate warnings
+  Warning.dedup
 
   # Ignore all warnings in Gem dependencies
   Gem.path.each do |path|

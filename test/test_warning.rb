@@ -43,6 +43,30 @@ class WarningTest < Minitest::Test
     Warning.clear
   end
 
+  def ivar
+    Object.new.instance_variable_get(:@ivar)
+  end
+
+  def test_warning_dedup
+    obj = Object.new
+
+    assert_warning(/instance variable @ivar not initialized/) do
+      ivar
+    end
+    assert_warning(/instance variable @ivar not initialized/) do
+      ivar
+    end
+
+    Warning.dedup
+
+    assert_warning(/instance variable @ivar not initialized/) do
+      ivar
+    end
+    assert_warning('') do
+      ivar
+    end
+  end
+
   def test_warning_ignore
     obj = Object.new
 

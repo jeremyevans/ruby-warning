@@ -254,16 +254,16 @@ class WarningTest < Minitest::Test
   end
 
   def test_warning_ignore_keyword
-    assert_warning(/warning: The last argument is used as the keyword parameter.*for `h2kw' defined here/m) do
+    assert_warning(/warning: Using the last argument as keyword parameters is deprecated; maybe \*\* should be added to the call.*The called method `h2kw' is defined here/m) do
       h2kw({})
     end
-    assert_warning(/warning: The keyword argument is passed as the last hash parameter.*for `kw2h' defined here/m) do
+    assert_warning(/warning: Passing the keyword argument as the last hash parameter is deprecated.*The called method `kw2h' is defined here/m) do
       kw2h(a: 1)
     end
-    assert_warning(/warning: The last argument is split into positional and keyword parameters.*for `skw' defined here/m) do
+    assert_warning(/warning: Splitting the last argument into positional and keyword parameters is deprecated.*The called method `skw' is defined here/m) do
       skw("b" => 1, a: 2)
     end
-    assert_warning(/warning: The last argument is split into positional and keyword parameters.*for `skw' defined here/m) do
+    assert_warning(/warning: Splitting the last argument into positional and keyword parameters is deprecated.*The called method `skw' is defined here/m) do
       skw({"b" => 1, a: 2})
     end
 

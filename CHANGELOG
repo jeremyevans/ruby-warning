@@ -1,5 +1,7 @@
 === master
 
+* Add support for :taint as regexp argument to Warning.ignore (jeremyevans)
+
 * Add support for :safe as regexp argument to Warning.ignore (jeremyevans)
 
 * Add Warning.dedup for deduplicating warnings (jeremyevans)

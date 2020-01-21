@@ -1,6 +1,7 @@
 ENV['MT_NO_PLUGINS'] = '1' # Work around stupid autoloading of plugins
 require 'minitest/global_expectations/autorun'
 require 'warning'
+require 'pathname'
 
 class WarningTest < Minitest::Test
   module EnvUtil
@@ -285,6 +286,53 @@ class WarningTest < Minitest::Test
 
       assert_warning("") do
         $SAFE = 0
+      end
+    end
+  end
+
+  if RUBY_VERSION > '2.7' && RUBY_VERSION < '3.2'
+
+    def test_warning_ignore_taint
+      o = Object.new
+
+      assert_warning(/Object#taint is deprecated and will be removed in Ruby 3\.2/) do
+        o.taint
+      end
+      assert_warning(/Object#untaint is deprecated and will be removed in Ruby 3\.2/) do
+        o.untaint
+      end
+      assert_warning(/Object#tainted\? is deprecated and will be removed in Ruby 3\.2/) do
+        o.tainted?
+      end
+      assert_warning(/Object#trust is deprecated and will be removed in Ruby 3\.2/) do
+        o.trust
+      end
+      assert_warning(/Object#untrust is deprecated and will be removed in Ruby 3\.2/) do
+        o.untrust
+      end
+      assert_warning(/Object#untrusted\? is deprecated and will be removed in Ruby 3\.2/) do
+        o.untrusted?
+      end
+
+      path = Pathname.new(__FILE__)
+      assert_warning(/Pathname#taint is deprecated and will be removed in Ruby 3\.2/) do
+        path.taint
+      end
+      assert_warning(/Pathname#untaint is deprecated and will be removed in Ruby 3\.2/) do
+        path.untaint
+      end
+
+      Warning.ignore(:taint, __FILE__)
+
+      assert_warning("") do
+        o.taint
+        o.untaint
+        o.tainted?
+        o.trust
+        o.untrust
+        o.untrusted?
+        p.taint
+        p.untaint
       end
     end
   end

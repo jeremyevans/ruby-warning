@@ -37,6 +37,7 @@ appropriate regexp.  The supported symbols are:
 * :not_reached
 * :safe
 * :shadow
+* :taint
 * :unused_var
 * :useless_operator
 

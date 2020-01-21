@@ -1,4 +1,4 @@
-=== master
+=== 1.0.0 (2020-01-21)
 
 * Add support for :taint as regexp argument to Warning.ignore (jeremyevans)
 

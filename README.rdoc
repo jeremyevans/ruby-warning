@@ -35,6 +35,7 @@ appropriate regexp.  The supported symbols are:
 * :missing_gvar
 * :missing_ivar
 * :not_reached
+* :safe
 * :shadow
 * :unused_var
 * :useless_operator

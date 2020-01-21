@@ -15,7 +15,8 @@ module Warning
       shadow: /: warning: shadowing outer local variable - \w+\n\z/,
       unused_var: /: warning: assigned but unused variable - \w+\n\z/,
       useless_operator: /: warning: possibly useless use of [><!=]+ in void context\n\z/,
-      keyword_separation: /: warning: (?:Using the last argument (?:for `.+' )?as keyword parameters is deprecated; maybe \*\* should be added to the call|Passing the keyword argument (?:for `.+' )?as the last hash parameter is deprecated|Splitting the last argument (?:for `.+' )?into positional and keyword parameters is deprecated|The called method (?:`.+' )?is defined here)/,
+      keyword_separation: /: warning: (?:Using the last argument (?:for `.+' )?as keyword parameters is deprecated; maybe \*\* should be added to the call|Passing the keyword argument (?:for `.+' )?as the last hash parameter is deprecated|Splitting the last argument (?:for `.+' )?into positional and keyword parameters is deprecated|The called method (?:`.+' )?is defined here)\n\z/,
+      safe: /: warning: (?:rb_safe_level_2_warning|rb_safe_level|rb_set_safe_level_force|rb_set_safe_level|rb_secure|rb_insecure_operation|rb_check_safe_obj|\$SAFE) will (?:be removed|become a normal global variable) in Ruby 3\.0\n\z/
     }
 
     # Clear all current ignored warnings, warning processors, and duplicate check cache.
@@ -50,6 +51,7 @@ module Warning
     # :ambiguous_slash :: Ignore warnings for things like <tt>method /regexp/</tt>
     # :bignum :: Ignore warnings when referencing the ::Bignum constant.
     # :fixnum :: Ignore warnings when referencing the ::Fixnum constant.
+    # :keyword_separation :: Ignore warnings related to keyword argument separation.
     # :method_redefined :: Ignore warnings when defining a method in a class/module where a
     #                      method of the same name was already defined in that class/module.
     # :missing_gvar :: Ignore warnings for accesses to global variables
@@ -57,6 +59,7 @@ module Warning
     # :missing_ivar :: Ignore warnings for accesses to instance variables
     #                  that have not yet been initialized
     # :not_reached :: Ignore statement not reached warnings.
+    # :safe :: Ignore warnings related to $SAFE and related C-API functions.
     # :shadow :: Ignore warnings related to shadowing outer local variables.
     # :unused_var :: Ignore warnings for unused variables.
     # :useless_operator :: Ignore warnings when using operators such as == and > when the

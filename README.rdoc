@@ -32,6 +32,7 @@ appropriate regexp.  The supported symbols are:
 * :fixnum
 * :keyword_separation
 * :method_redefined
+* :mismatched_indentations
 * :missing_gvar
 * :missing_ivar
 * :not_reached

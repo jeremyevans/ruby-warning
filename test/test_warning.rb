@@ -356,17 +356,10 @@ class WarningTest < Minitest::Test
       load 'test/fixtures/mismatched_indentations.rb'
     end
 
-    fixture_filename = Pathname.new(File.dirname(__FILE__))
-                               .join('fixtures/mismatched_indentations.rb')
-                               .to_path
-
-    Warning.ignore(
-      :mismatched_indentations,
-      fixture_filename
-    )
+    Warning.ignore(:mismatched_indentations, 'test/fixtures/mismatched_indentations.rb')
 
     assert_warning '' do
-      load fixture_filename
+      load 'test/fixtures/mismatched_indentations.rb'
     end
   end
 

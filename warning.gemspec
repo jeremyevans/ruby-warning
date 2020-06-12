@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s|
   s.name = 'warning'
-  s.version = '1.0.0'
+  s.version = '1.1.0'
   s.platform = Gem::Platform::RUBY
   s.extra_rdoc_files = ["README.rdoc", "CHANGELOG", "MIT-LICENSE"]
   s.rdoc_options += ["--quiet", "--line-numbers", "--inline-source", '--title', 'ruby-warning: Add custom processing for warnings', '--main', 'README.rdoc']
@@ -14,8 +14,9 @@ spec = Gem::Specification.new do |s|
   s.description = <<END
 ruby-warning adds custom processing for warnings, including the
 ability to ignore specific warning messages, ignore warnings
-in specific files/directories, and add custom handling for all
-warnings in specific files/directories.
+in specific files/directories, include backtraces with warnings,
+treat warnings as errors, deduplicate warnings, and add
+custom handling for all warnings in specific files/directories.
 END
   s.add_development_dependency "minitest-global_expectations"
   s.metadata = {

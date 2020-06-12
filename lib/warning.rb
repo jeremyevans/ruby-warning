@@ -21,6 +21,14 @@ module Warning
       mismatched_indentations: /: warning: mismatched indentations at '.+' with '.+' at \d+\n\z/,
     }
 
+    # Map of action symbols to procs that return the symbol
+    ACTION_PROC_MAP = {
+      default: proc{|_| :default},
+      backtrace: proc{|_| :backtrace},
+      raise: proc{|_| :raise},
+    }
+    private_constant :ACTION_PROC_MAP
+
     # Clear all current ignored warnings, warning processors, and duplicate check cache.
     # Also disables deduplicating warnings if that is currently enabled.
     def clear
@@ -82,14 +90,7 @@ module Warning
     #   # Ignore all uninitialized instance variable and method redefined warnings in current file
     #   Warning.ignore([:missing_ivar, :method_redefined],  __FILE__)
     def ignore(regexp, path='')
-      case regexp
-      when Regexp
-        # already regexp
-      when Symbol
-        regexp = IGNORE_MAP.fetch(regexp)
-      when Array
-        regexp = Regexp.union(regexp.map{|re| IGNORE_MAP.fetch(re)})
-      else
+      unless regexp = convert_regexp(regexp)
         raise TypeError, "first argument to Warning.ignore should be Regexp, Symbol, or Array of Symbols, got #{regexp.inspect}"
       end
 
@@ -111,7 +112,52 @@ module Warning
     #   Warning.process(__FILE__) do |warning|
     #     LOGGER.error(warning)
     #   end
-    def process(path='', &block)
+    #
+    # The block can return one of the following symbols:
+    #
+    # :default :: Take the default action (call super, printing to $stderr).
+    # :backtrace :: Take the default action (call super, printing to $stderr),
+    #               and also print the backtrace.
+    # :raise :: Raise a RuntimeError with the warning as the message.
+    #
+    # If the block returns anything else, it is assumed the block completely handled
+    # the warning and takes no other action.
+    #
+    # Instead of passing a block, you can pass a hash of actions to take for specific
+    # warnings, using regexp as keys and a callable objects as values:
+    #
+    #   Warning.ignore(__FILE__,
+    #     /instance variable @\w+ not initialized/ => proc do |warning|
+    #       LOGGER.warning(warning)
+    #     end,
+    #     /global variable `\$\w+' not initialized/ => proc do |warning|
+    #       LOGGER.error(warning)
+    #     end
+    #   )
+    #
+    # Instead of passing a regexp as a key, you can pass a symbol that is recognized
+    # by Warning.ignore.  Instead of passing a callable object as a value, you can
+    # pass a symbol, which will be treated as a callable object that returns that symbol:
+    #
+    #   Warning.process(__FILE__, :missing_ivar=>:backtrace, :keyword_separation=>:raise)
+    def process(path='', actions=nil, &block)
+      if block
+        if actions
+          raise ArgumentError, "cannot pass both actions and block to Warning.process"
+        end
+      elsif actions
+        block = {}
+        actions.each do |regexp, value|
+          unless regexp = convert_regexp(regexp)
+            raise TypeError, "action provided to Warning.process should be Regexp, Symbol, or Array of Symbols, got #{regexp.inspect}"
+          end
+
+          block[regexp] = ACTION_PROC_MAP[value] || value
+        end
+      else
+        raise ArgumentError, "must pass either actions or block to Warning.process"
+      end
+
       synchronize do
         @process << [path, block]
         @process.sort_by!(&:first)
@@ -139,17 +185,54 @@ module Warning
         synchronize{@dedup[str] = true}
       end
 
-      synchronize{@process.dup}.each do |path, block|
-        if str.start_with?(path)
-          block.call(str)
-          return
+      action = catch(:action) do
+        synchronize{@process.dup}.each do |path, block|
+          if str.start_with?(path)
+            if block.is_a?(Hash)
+              block.each do |regexp, blk|
+                if str =~ regexp
+                  throw :action, blk.call(str)
+                end
+              end
+            else
+              throw :action, block.call(str)
+            end
+          end
         end
+
+        :default
       end
 
-      super
+      case action
+      when :default
+        super
+      when :backtrace
+        super
+        $stderr.puts caller
+      when :raise
+        raise str
+      else
+        # nothing
+      end
+
+      nil
     end
 
     private
+
+    # Convert the given Regexp, Symbol, or Array of Symbols into a Regexp.
+    def convert_regexp(regexp)
+      case regexp
+      when Regexp
+        regexp
+      when Symbol
+        IGNORE_MAP.fetch(regexp)
+      when Array
+        Regexp.union(regexp.map{|re| IGNORE_MAP.fetch(re)})
+      else
+        # nothing
+      end
+    end
 
     def synchronize(&block)
       @monitor.synchronize(&block)

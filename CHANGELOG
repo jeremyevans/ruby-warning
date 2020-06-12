@@ -1,4 +1,8 @@
-=== master
+=== 1.1.0 (2020-06-12)
+
+* Allow Warning.process to be called with a hash of actions instead of a block (jeremyevans)
+
+* Handle Warning.process blocks that return :default, :backtrace, or :raise specially (jeremyevans)
 
 * Add support for :mismatched_indentations as regexp argument to Warning.ignore (qortex) (#7)
 

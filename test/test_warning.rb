@@ -6,8 +6,12 @@ require 'pathname'
 class WarningTest < Minitest::Test
   module EnvUtil
     def verbose_warning
+      stderr = ""
       class << (stderr = "")
         alias write <<
+        def puts(*a)
+          self << a.join("\n")
+        end
       end
       stderr, $stderr, verbose, $VERBOSE = $stderr, stderr, $VERBOSE, true
       yield stderr
@@ -425,5 +429,87 @@ class WarningTest < Minitest::Test
     end
     assert_equal(4, warn.first)
     assert_match(/instance variable @ivar6 not initialized/, warn.last)
+  end
+
+  def test_warning_process_block_return_default
+    w = nil
+    Warning.process(__FILE__) do |warning|
+      w = warning
+      :default
+    end
+
+    assert_warning(/instance variable @ivar not initialized/) do
+      ivar
+    end
+    assert_match(/instance variable @ivar not initialized/, w)
+  end
+
+  def test_warning_process_block_return_backtrace
+    w = nil
+    Warning.process(__FILE__) do |warning|
+      w = warning
+      :backtrace
+    end
+
+    assert_warning(/instance variable @ivar not initialized.*#{__FILE__}/m) do
+      ivar
+    end
+    assert_match(/instance variable @ivar not initialized/, w)
+  end
+
+  def test_warning_process_block_return_raise
+    w = nil
+    Warning.process(__FILE__) do |warning|
+      w = warning
+      :raise
+    end
+
+    assert_raises(RuntimeError, /instance variable @ivar not initialized/) do
+      EnvUtil.verbose_warning{ivar}
+    end
+    assert_match(/instance variable @ivar not initialized/, w)
+  end
+
+  def test_warning_process_action
+    w = nil
+    Warning.process(__FILE__, :missing_ivar=>:default, :missing_gvar=>:backtrace, :ambiguous_slash=>:raise)
+    Warning.process(__FILE__, :not_reached=>proc do |warning|
+      w = warning
+      :raise
+    end)
+
+    assert_warning(/instance variable @ivar not initialized/) do
+      ivar
+    end
+
+    assert_warning(/global variable `\$gvar' not initialized.*#{__FILE__}/m) do
+      $gvar
+    end
+
+    Warning.process(__FILE__) do |warning|
+      w = warning
+      :raise
+    end
+
+    assert_raises(RuntimeError, /warning: ambiguous first argument; put parentheses or a space even after `\/' operator/) do
+      EnvUtil.verbose_warning{instance_eval('d /a/', __FILE__)}
+    end
+
+    assert_raises(RuntimeError, /warning: statement not reached/) do
+      EnvUtil.verbose_warning{instance_eval('def self.b; return; 1 end', __FILE__)}
+    end
+    assert_match(/warning: statement not reached/, w)
+  end
+
+  def test_warning_process_action_and_block
+    assert_raises(ArgumentError) do
+      Warning.process(__FILE__)
+    end
+  end
+
+  def test_warning_process_no_action_and_no_block
+    assert_raises(ArgumentError) do
+      Warning.process(__FILE__, :missing_ivar=>:default){}
+    end
   end
 end

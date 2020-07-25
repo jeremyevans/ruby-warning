@@ -126,7 +126,7 @@ module Warning
     # Instead of passing a block, you can pass a hash of actions to take for specific
     # warnings, using regexp as keys and a callable objects as values:
     #
-    #   Warning.ignore(__FILE__,
+    #   Warning.process(__FILE__,
     #     /instance variable @\w+ not initialized/ => proc do |warning|
     #       LOGGER.warning(warning)
     #     end,

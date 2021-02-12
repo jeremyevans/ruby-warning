@@ -108,6 +108,30 @@ class WarningTest < Minitest::Test
     end
   end
 
+  def test_warning_ignore_with_block
+    obj = Object.new
+
+    assert_warning(/instance variable @ivar3 not initialized/) do
+      Warning.ignore(/foo/) do
+        assert_nil(obj.instance_variable_get(:@ivar3))
+      end
+    end
+
+    assert_warning '' do
+      Warning.ignore(/instance variable @ivar3 not initialized/) do
+        assert_nil(obj.instance_variable_get(:@ivar3))
+      end
+    end
+
+    assert_warning(/instance variable @ivar3 not initialized/) do
+      Warning.ignore(/instance variable @ivar3 not initialized/) do
+        assert_nil(obj.instance_variable_get(:@ivar3))
+      end
+
+      assert_nil(obj.instance_variable_get(:@ivar3))
+    end
+  end
+
   def test_warning_ignore_missing_ivar
     Warning.clear
 

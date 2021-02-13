@@ -4,7 +4,7 @@ module Warning
   module Processor
     # Map of symbols to regexps for warning messages to ignore.
     IGNORE_MAP = {
-      ambiguous_slash: /: warning: ambiguous first argument; put parentheses or a space even after `\/' operator\n\z/,
+      ambiguous_slash: /: warning: ambiguous first argument; put parentheses or a space even after `\/' operator\n\z|: warning: ambiguity between regexp and two divisions: wrap regexp in parentheses or add a space after `\/' operator\n\z/,
       arg_prefix: /: warning: `[&\*]' interpreted as argument prefix\n\z/,
       bignum: /: warning: constant ::Bignum is deprecated\n\z/,
       fixnum: /: warning: constant ::Fixnum is deprecated\n\z/,

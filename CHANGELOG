@@ -1,5 +1,7 @@
 === master
 
+* Fix :taint warning handling on Ruby 3.0 (jeremyevans)
+
 * Fix :ambiguous_slash warning handling on Ruby 3.0 (jeremyevans)
 
 === 1.1.0 (2020-06-12)

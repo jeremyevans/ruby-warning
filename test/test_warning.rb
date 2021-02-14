@@ -48,71 +48,65 @@ class WarningTest < Minitest::Test
     Warning.clear
   end
 
-  def ivar
-    Object.new.instance_variable_get(:@ivar)
-  end
-
   def test_warning_dedup
-    assert_warning(/instance variable @ivar not initialized/) do
-      ivar
+    gvar = ->{$test_warning_dedup}
+
+    assert_warning(/global variable `\$test_warning_dedup' not initialized/) do
+      gvar.call
     end
-    assert_warning(/instance variable @ivar not initialized/) do
-      ivar
+    assert_warning(/global variable `\$test_warning_dedup' not initialized/) do
+      gvar.call
     end
 
     Warning.dedup
 
-    assert_warning(/instance variable @ivar not initialized/) do
-      ivar
+    assert_warning(/global variable `\$test_warning_dedup' not initialized/) do
+      gvar.call
     end
     assert_warning('') do
-      ivar
+      gvar.call
     end
   end
 
   def test_warning_ignore
-    obj = Object.new
-
-    assert_warning(/instance variable @ivar not initialized/) do
-      assert_nil(obj.instance_variable_get(:@ivar))
+    assert_warning(/global variable `\$test_warning_ignore' not initialized/) do
+      assert_nil($test_warning_ignore)
     end
 
-    assert_warning(/instance variable @ivar not initialized/) do
-      assert_nil(obj.instance_variable_get(:@ivar))
-    end
-
-    Warning.ignore(/instance variable @ivar not initialized/)
+    Warning.ignore(/global variable `\$test_warning_ignore' not initialized/)
 
     assert_warning '' do
-      assert_nil(obj.instance_variable_get(:@ivar))
+      assert_nil($test_warning_ignore)
     end
 
-    assert_warning(/instance variable @ivar2 not initialized/) do
-      assert_nil(obj.instance_variable_get(:@ivar2))
+    assert_warning(/global variable `\$test_warning_ignore2' not initialized/) do
+      assert_nil($test_warning_ignore2)
     end
 
-    Warning.ignore(/instance variable @ivar2 not initialized/, __FILE__)
+    Warning.ignore(/global variable `\$test_warning_ignore2' not initialized/, __FILE__)
 
     assert_warning '' do
-      assert_nil(obj.instance_variable_get(:@ivar2))
+      assert_nil($test_warning_ignore2)
     end
 
-    assert_warning(/instance variable @ivar3 not initialized/) do
-      assert_nil(obj.instance_variable_get(:@ivar3))
+    assert_warning(/global variable `\$test_warning_ignore3' not initialized/) do
+      assert_nil($test_warning_ignore3)
     end
 
-    Warning.ignore(/instance variable @ivar3 not initialized/, __FILE__+'a')
+    Warning.ignore(/global variable `\$test_warning_ignore3' not initialized/, __FILE__ + 'a')
 
-    assert_warning(/instance variable @ivar3 not initialized/) do
-      assert_nil(obj.instance_variable_get(:@ivar3))
+    assert_warning(/global variable `\$test_warning_ignore3' not initialized/) do
+      assert_nil($test_warning_ignore3)
     end
   end
 
   def test_warning_ignore_missing_ivar
     Warning.clear
 
-    assert_warning(/instance variable @ivar not initialized/) do
-      assert_nil(instance_variable_get(:@ivar))
+    unless RUBY_VERSION >= '3.0'
+      assert_warning(/instance variable @ivar not initialized/) do
+        assert_nil(instance_variable_get(:@ivar))
+      end
     end
 
     Warning.ignore(:missing_ivar, __FILE__)
@@ -368,15 +362,14 @@ class WarningTest < Minitest::Test
   end
 
   def test_warning_process
-    obj = Object.new
     warn = nil
 
     Warning.process(__FILE__+'a') do |warning|
       warn = [0, warning]
     end
 
-    assert_warning(/instance variable @ivar not initialized/) do
-      assert_nil(obj.instance_variable_get(:@ivar))
+    assert_warning(/global variable `\$test_warning_process' not initialized/) do
+      $test_warning_process
     end
     assert_nil(warn)
 
@@ -385,10 +378,10 @@ class WarningTest < Minitest::Test
     end
 
     assert_warning '' do
-      assert_nil(obj.instance_variable_get(:@ivar2))
+      $test_warning_process2
     end
     assert_equal(1, warn.first)
-    assert_match(/instance variable @ivar2 not initialized/, warn.last)
+    assert_match(/global variable `\$test_warning_process2' not initialized/, warn.last)
     warn = nil
 
     Warning.process(File.dirname(__FILE__)) do |warning|
@@ -396,10 +389,10 @@ class WarningTest < Minitest::Test
     end
 
     assert_warning '' do
-      assert_nil(obj.instance_variable_get(:@ivar3))
+      $test_warning_process3
     end
     assert_equal(1, warn.first)
-    assert_match(/instance variable @ivar3 not initialized/, warn.last)
+    assert_match(/global variable `\$test_warning_process3' not initialized/, warn.last)
     warn = nil
 
     Warning.process(__FILE__+':') do |warning|
@@ -407,16 +400,16 @@ class WarningTest < Minitest::Test
     end
 
     assert_warning '' do
-      assert_nil(obj.instance_variable_get(:@ivar4))
+      $test_warning_process4
     end
     assert_equal(3, warn.first)
-    assert_match(/instance variable @ivar4 not initialized/, warn.last)
+    assert_match(/global variable `\$test_warning_process4' not initialized/, warn.last)
     warn = nil
 
     Warning.clear
 
-    assert_warning(/instance variable @ivar5 not initialized/) do
-      assert_nil(obj.instance_variable_get(:@ivar5))
+    assert_warning(/global variable `\$test_warning_process5' not initialized/) do
+      $test_warning_process5
     end
     assert_nil(warn)
 
@@ -425,10 +418,10 @@ class WarningTest < Minitest::Test
     end
 
     assert_warning '' do
-      assert_nil(obj.instance_variable_get(:@ivar6))
+      $test_warning_process6
     end
     assert_equal(4, warn.first)
-    assert_match(/instance variable @ivar6 not initialized/, warn.last)
+    assert_match(/global variable `\$test_warning_process6' not initialized/, warn.last)
   end
 
   def test_warning_process_block_return_default
@@ -438,10 +431,10 @@ class WarningTest < Minitest::Test
       :default
     end
 
-    assert_warning(/instance variable @ivar not initialized/) do
-      ivar
+    assert_warning(/global variable `\$test_warning_process_block_return_default' not initialized/) do
+      $test_warning_process_block_return_default
     end
-    assert_match(/instance variable @ivar not initialized/, w)
+    assert_match(/global variable `\$test_warning_process_block_return_default' not initialized/, w)
   end
 
   def test_warning_process_block_return_backtrace
@@ -451,10 +444,10 @@ class WarningTest < Minitest::Test
       :backtrace
     end
 
-    assert_warning(/instance variable @ivar not initialized.*#{__FILE__}/m) do
-      ivar
+    assert_warning(/global variable `\$test_warning_process_block_return_backtrace' not initialized.*#{__FILE__}/m) do
+      $test_warning_process_block_return_backtrace
     end
-    assert_match(/instance variable @ivar not initialized/, w)
+    assert_match(/global variable `\$test_warning_process_block_return_backtrace' not initialized/, w)
   end
 
   def test_warning_process_block_return_raise
@@ -464,26 +457,29 @@ class WarningTest < Minitest::Test
       :raise
     end
 
-    assert_raises(RuntimeError, /instance variable @ivar not initialized/) do
-      EnvUtil.verbose_warning{ivar}
+    assert_raises(RuntimeError) do
+      $test_warning_process_block_return_raise
     end
-    assert_match(/instance variable @ivar not initialized/, w)
+    assert_match(/global variable `\$test_warning_process_block_return_raise' not initialized/, w)
   end
 
   def test_warning_process_action
     w = nil
-    Warning.process(__FILE__, :missing_ivar=>:default, :missing_gvar=>:backtrace, :ambiguous_slash=>:raise)
+    Warning.process(__FILE__, :method_redefined=>:default, :missing_gvar=>:backtrace, :ambiguous_slash=>:raise)
     Warning.process(__FILE__, :not_reached=>proc do |warning|
       w = warning
       :raise
     end)
 
-    assert_warning(/instance variable @ivar not initialized/) do
-      ivar
+    assert_warning(/warning: method redefined/) do
+      Class.new do
+        def a; end
+        def a; end
+      end
     end
 
-    assert_warning(/global variable `\$gvar' not initialized.*#{__FILE__}/m) do
-      $gvar
+    assert_warning(/global variable `\$test_warning_process_action' not initialized.*#{__FILE__}/m) do
+      $test_warning_process_action
     end
 
     Warning.process(__FILE__) do |warning|
@@ -491,7 +487,7 @@ class WarningTest < Minitest::Test
       :raise
     end
 
-    assert_raises(RuntimeError, /warning: ambiguous first argument; put parentheses or a space even after `\/' operator/) do
+    assert_raises(RuntimeError, /warning: ambi/) do
       EnvUtil.verbose_warning{instance_eval('d /a/', __FILE__)}
     end
 

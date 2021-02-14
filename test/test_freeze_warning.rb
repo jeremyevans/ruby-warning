@@ -40,31 +40,30 @@ class WarningFreezeTest < Minitest::Test
   end
 
   def test_warning_ignore
-    obj = Object.new
     w = nil
 
-    Warning.ignore(/instance variable @ivar not initialized/)
+    Warning.ignore(/global variable `\$test_warning_ignore' not initialized/)
     Warning.process do |warning|
       w = [4, warning]
     end
     Warning.freeze
 
     assert_raises RuntimeError do
-      Warning.ignore(/instance variable @ivar not initialized/)
+      Warning.ignore(/global variable `\$test_warning_ignore' not initialized/)
     end
     assert_raises RuntimeError do
       Warning.process{|warning| w = [4, warning]}
     end
 
     assert_warning '' do
-      assert_nil(obj.instance_variable_get(:@ivar))
+      $test_warning_ignore
     end
     assert_nil w
 
     assert_warning '' do
-      assert_nil(obj.instance_variable_get(:@ivar6))
+      $test_warning_ignore2
     end
     assert_equal(4, w.first)
-    assert_match(/instance variable @ivar6 not initialized/, w.last)
+    assert_match(/global variable `\$test_warning_ignore2' not initialized/, w.last)
   end
 end

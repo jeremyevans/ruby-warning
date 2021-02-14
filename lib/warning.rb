@@ -166,57 +166,63 @@ module Warning
       nil
     end
 
-    # Handle ignored warnings and warning processors.  If the warning is
-    # not ignored, is not a duplicate warning (if checking for duplicates)
-    # and there is no warning processor setup for the warning
-    # string, then use the default behavior of writing to $stderr.
-    def warn(str)
-      synchronize{@ignore.dup}.each do |path, regexp|
-        if str.start_with?(path) && str =~ regexp
-          return
-        end
-      end
 
-      if @dedup
-        if synchronize{@dedup[str]}
-          return
-        end
+    if RUBY_VERSION >= '3.0'
+      method_args = ', category: nil'
+      super_ = "category ? super : super(str)"
+    else
+      super_ = "super"
+    end
 
-        synchronize{@dedup[str] = true}
-      end
-
-      action = catch(:action) do
-        synchronize{@process.dup}.each do |path, block|
-          if str.start_with?(path)
-            if block.is_a?(Hash)
-              block.each do |regexp, blk|
-                if str =~ regexp
-                  throw :action, blk.call(str)
-                end
-              end
-            else
-              throw :action, block.call(str)
-            end
+    class_eval(<<-END, __FILE__, __LINE__+1)
+      def warn(str#{method_args})
+        synchronize{@ignore.dup}.each do |path, regexp|
+          if str.start_with?(path) && str =~ regexp
+            return
           end
         end
 
-        :default
-      end
+        if @dedup
+          if synchronize{@dedup[str]}
+            return
+          end
 
-      case action
-      when :default
-        super
-      when :backtrace
-        super
-        $stderr.puts caller
-      when :raise
-        raise str
-      else
-        # nothing
-      end
+          synchronize{@dedup[str] = true}
+        end
 
-      nil
-    end
+        action = catch(:action) do
+          synchronize{@process.dup}.each do |path, block|
+            if str.start_with?(path)
+              if block.is_a?(Hash)
+                block.each do |regexp, blk|
+                  if str =~ regexp
+                    throw :action, blk.call(str)
+                  end
+                end
+              else
+                throw :action, block.call(str)
+              end
+            end
+          end
+
+          :default
+        end
+
+        case action
+        when :default
+          #{super_}
+        when :backtrace
+          #{super_}
+          $stderr.puts caller
+        when :raise
+          raise str
+        else
+          # nothing
+        end
+
+        nil
+      end
+    END
 
     private
 

@@ -1,5 +1,7 @@
 === master
 
+* Support :category keyword to Warning.warn on Ruby 3.0 (jeremyevans)
+
 * Fix :taint warning handling on Ruby 3.0 (jeremyevans)
 
 * Fix :ambiguous_slash warning handling on Ruby 3.0 (jeremyevans)

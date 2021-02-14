@@ -508,4 +508,12 @@ class WarningTest < Minitest::Test
       Warning.process(__FILE__, :missing_ivar=>:default){}
     end
   end
+
+  if RUBY_VERSION >= '3.0'
+    def test_warning_warn_category_keyword
+      assert_warning('foo') do
+        Warning.warn("foo", category: :deprecated)
+      end
+    end
+  end
 end

@@ -1,5 +1,7 @@
 === master
 
+* Add support for :void_context as regexp argument to Warning.ignore (jeremyevans)
+
 * Support :category keyword to Warning.warn on Ruby 3.0 (jeremyevans)
 
 * Fix :taint warning handling on Ruby 3.0 (jeremyevans)

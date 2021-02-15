@@ -178,6 +178,18 @@ class WarningTest < Minitest::Test
     end
   end
 
+  def test_warning_ignore_void_context
+    assert_warning(/warning: possibly useless use of :: in void context/) do
+      instance_eval('::Object; nil', __FILE__, __LINE__)
+    end
+
+    Warning.ignore(:void_context, __FILE__)
+
+    assert_warning '' do
+      instance_eval('::Object; nil', __FILE__, __LINE__)
+    end
+  end
+
   def test_warning_ignore_ambiguous_slash
     def self.d(re); end
     assert_warning(/warning: ambi/) do

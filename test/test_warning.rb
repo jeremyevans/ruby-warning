@@ -188,6 +188,28 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       instance_eval('::Object; nil', __FILE__, __LINE__)
     end
+
+    assert_warning '' do
+      instance_eval('Object; nil', __FILE__, __LINE__)
+    end
+
+    assert_warning '' do
+      instance_eval('v = 0; v; nil', __FILE__, __LINE__)
+    end
+
+    assert_warning '' do
+      instance_eval('1 > 1; nil', __FILE__, __LINE__)
+    end
+
+    assert_warning '' do
+      instance_eval('defined? C; nil', __FILE__, __LINE__)
+    end
+
+    if RUBY_VERSION >= '2.6'
+      assert_warning '' do
+        instance_eval('1..; nil', __FILE__, __LINE__)
+      end
+    end
   end
 
   def test_warning_ignore_ambiguous_slash

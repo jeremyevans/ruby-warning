@@ -40,7 +40,7 @@ module Warning
       end
     end
 
-    # Deduplicate warnings, supress warning messages if the same warning message
+    # Deduplicate warnings, suppress warning messages if the same warning message
     # has already occurred.  Note that this can lead to unbounded memory use
     # if unique warnings are generated.
     def dedup

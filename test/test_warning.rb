@@ -164,7 +164,7 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       ::Fixnum
     end
-  end
+  end if RUBY_VERSION < '3.2'
 
   def test_warning_ignore_bignum
     assert_warning(/warning: constant ::Bignum is deprecated/) do
@@ -176,7 +176,7 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       ::Bignum
     end
-  end
+  end if RUBY_VERSION < '3.2'
 
   def test_warning_ignore_void_context
     assert_warning(/warning: possibly useless use of :: in void context/) do

@@ -1,6 +1,4 @@
-ENV['MT_NO_PLUGINS'] = '1' # Work around stupid autoloading of plugins
-require 'minitest/global_expectations/autorun'
-require 'warning'
+require_relative 'test_helper'
 
 class WarningFreezeTest < Minitest::Test
   module EnvUtil

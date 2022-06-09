@@ -24,9 +24,9 @@ module Warning
 
     # Map of action symbols to procs that return the symbol
     ACTION_PROC_MAP = {
+      raise: proc{|_| :raise},
       default: proc{|_| :default},
       backtrace: proc{|_| :backtrace},
-      raise: proc{|_| :raise},
     }
     private_constant :ACTION_PROC_MAP
 
@@ -173,8 +173,10 @@ module Warning
     if RUBY_VERSION >= '3.0'
       method_args = ', category: nil'
       super_ = "category ? super : super(str)"
+    # :nocov:
     else
       super_ = "super"
+    # :nocov:
     end
 
     class_eval(<<-END, __FILE__, __LINE__+1)

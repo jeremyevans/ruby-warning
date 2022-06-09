@@ -1,6 +1,5 @@
 require "rake"
 require "rake/clean"
-require 'rake/testtask'
 require "rdoc/task"
 
 CLEAN.include ["warning-*.gem", "rdoc"]
@@ -12,18 +11,22 @@ end
 
 ### Specs
 
-desc "Run test"
-Rake::TestTask.new do |t|
-  t.libs.push "lib"
-  t.test_files = FileList['test/test_warning.rb']
-  t.verbose = true
+desc "Run tests"
+task :test do
+  sh "#{FileUtils::RUBY} -w test/test_warning.rb"
 end
 
-desc "Run test"
-Rake::TestTask.new(:test_freeze) do |t|
-  t.libs.push "lib"
-  t.test_files = FileList['test/test_freeze_warning.rb']
-  t.verbose = true
+desc "Run tests with frozen Warning"
+task :test_freeze do
+  sh "#{FileUtils::RUBY} -w test/test_freeze_warning.rb"
+end
+
+desc "Run tests with coverage"
+task :test_cov do
+  ENV['COVERAGE'] = 'regular'
+  sh "#{FileUtils::RUBY} -w test/test_warning.rb"
+  ENV['COVERAGE'] = 'frozen'
+  sh "#{FileUtils::RUBY} -w test/test_freeze_warning.rb"
 end
 
 desc "Run all tests"

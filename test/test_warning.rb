@@ -1,6 +1,4 @@
-ENV['MT_NO_PLUGINS'] = '1' # Work around stupid autoloading of plugins
-require 'minitest/global_expectations/autorun'
-require 'warning'
+require_relative 'test_helper'
 require 'pathname'
 
 class WarningTest < Minitest::Test
@@ -97,6 +95,10 @@ class WarningTest < Minitest::Test
 
     assert_warning(/global variable `\$test_warning_ignore3' not initialized/) do
       assert_nil($test_warning_ignore3)
+    end
+
+    assert_raises(TypeError) do
+      Warning.ignore(Object.new)
     end
   end
 
@@ -456,6 +458,10 @@ class WarningTest < Minitest::Test
     end
     assert_equal(4, warn.first)
     assert_match(/global variable `\$test_warning_process6' not initialized/, warn.last)
+
+    assert_raises(TypeError) do
+      Warning.process('', Object.new=>:raise)
+    end
   end
 
   def test_warning_process_block_return_default

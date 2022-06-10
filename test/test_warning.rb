@@ -504,10 +504,8 @@ class WarningTest < Minitest::Test
   end
 
   def test_warning_process_action
-    w = nil
     Warning.process(__FILE__, :method_redefined=>:default, :missing_gvar=>:backtrace, :ambiguous_slash=>:raise)
     Warning.process(__FILE__, :not_reached=>proc do |warning|
-      w = warning
       :raise
     end)
 
@@ -522,19 +520,15 @@ class WarningTest < Minitest::Test
       $test_warning_process_action
     end
 
-    Warning.process(__FILE__) do |warning|
-      w = warning
-      :raise
-    end
-
-    assert_raises(RuntimeError, /warning: ambi/) do
+    e = assert_raises(RuntimeError) do
       EnvUtil.verbose_warning{instance_eval('d /a/', __FILE__)}
     end
+    assert_includes(e.message, "warning: ambi")
 
-    assert_raises(RuntimeError, /warning: statement not reached/) do
+    e = assert_raises(RuntimeError) do
       EnvUtil.verbose_warning{instance_eval('def self.b; return; 1 end', __FILE__)}
     end
-    assert_match(/warning: statement not reached/, w)
+    assert_includes(e.message, "warning: statement not reached")
   end
 
   def test_warning_process_action_and_block

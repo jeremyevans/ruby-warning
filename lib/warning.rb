@@ -182,7 +182,7 @@ module Warning
     class_eval(<<-END, __FILE__, __LINE__+1)
       def warn(str#{method_args})
         synchronize{@ignore.dup}.each do |path, regexp|
-          if str.start_with?(path) && str =~ regexp
+          if str.start_with?(path) && regexp.match?(str)
             return
           end
         end
@@ -200,7 +200,7 @@ module Warning
             if str.start_with?(path)
               if block.is_a?(Hash)
                 block.each do |regexp, blk|
-                  if str =~ regexp
+                  if regexp.match?(str)
                     throw :action, blk.call(str)
                   end
                 end

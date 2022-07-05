@@ -543,6 +543,13 @@ class WarningTest < Minitest::Test
     end
   end
 
+  def test_warning_process_path_no_string
+    e = assert_raises(ArgumentError) do
+      Warning.process(/foo/) { :raise }
+    end
+    assert_includes(e.message, "path must be a String not a Regexp")
+  end
+
   if RUBY_VERSION >= '3.0'
     def test_warning_warn_category_keyword
       assert_warning('foo') do

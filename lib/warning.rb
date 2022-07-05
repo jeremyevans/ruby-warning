@@ -144,6 +144,10 @@ module Warning
     #
     #   Warning.process(__FILE__, :missing_ivar=>:backtrace, :keyword_separation=>:raise)
     def process(path='', actions=nil, &block)
+      unless path.is_a?(String)
+        raise ArgumentError, "path must be a String not a #{path.class}"
+      end
+
       if block
         if actions
           raise ArgumentError, "cannot pass both actions and block to Warning.process"

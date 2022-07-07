@@ -46,6 +46,92 @@ class WarningTest < Minitest::Test
     Warning.clear
   end
 
+  def test_warning_clear_ignore
+    Warning.ignore(/.*/)
+
+    assert_warning '' do
+      Warning.warn 'foo'
+    end
+
+    Warning.clear do
+      assert_warning 'foo' do
+        Warning.warn 'foo'
+      end
+    end
+
+    assert_warning '' do
+      Warning.warn 'foo'
+    end
+
+    Warning.clear
+
+    assert_warning 'foo' do
+      Warning.warn 'foo'
+    end
+  end
+
+  def test_warning_clear_process
+    Warning.process('', /foo/ => :raise)
+
+    e = assert_raises(RuntimeError) do
+      Warning.warn 'foo'
+    end
+    assert_equal('foo', e.message)
+
+    Warning.clear do
+      assert_warning 'foo' do
+        Warning.warn 'foo'
+      end
+    end
+
+    e = assert_raises(RuntimeError) do
+      Warning.warn 'foo'
+    end
+    assert_equal('foo', e.message)
+
+    Warning.clear
+
+    assert_warning 'foo' do
+      Warning.warn 'foo'
+    end
+  end
+
+  def test_warning_clear_dedup
+    Warning.dedup
+
+    assert_warning 'foo' do
+      Warning.warn 'foo'
+    end
+
+    assert_warning '' do
+      Warning.warn 'foo'
+    end
+
+    Warning.clear do
+      assert_warning 'foo' do
+        Warning.warn 'foo'
+      end
+
+      assert_warning 'foo' do
+        Warning.warn 'foo'
+      end
+    end
+
+    assert_warning '' do
+      Warning.warn 'foo'
+    end
+
+    Warning.clear
+
+    assert_warning 'foo' do
+      Warning.warn 'foo'
+    end
+
+    assert_warning 'foo' do
+      Warning.warn 'foo'
+    end
+  end
+
   def test_warning_dedup
     gvar = ->{$test_warning_dedup}
 

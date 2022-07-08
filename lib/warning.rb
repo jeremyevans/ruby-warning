@@ -33,25 +33,28 @@ module Warning
     # Clear all current ignored warnings, warning processors, and duplicate check cache.
     # Also disables deduplicating warnings if that is currently enabled.
     #
-    # If a block is passed, the values are only cleared within the block and
-    # restored after the block ends.
+    # If a block is passed, the previous values are restored after the block exits.
     #
     # Examples:
     #
-    #   # Clear all values
+    #   # Clear warning state
     #   Warning.clear
     #
-    #   # Clear values only within the block.
     #   Warning.clear do
+    #     # Clear warning state inside the block
     #     ...
     #   end
-    #   # The values are stored to previous state.
-    def clear(&block)
-      if block
-        begin
+    #   # Previous warning state restored when block exists
+    def clear
+      if block_given?
+        ignore = process = dedup = nil
+        synchronize do
           ignore = @ignore.dup
           process = @process.dup
           dedup = @dedup.dup
+        end
+
+        begin
           clear
           yield
         ensure

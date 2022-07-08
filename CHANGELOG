@@ -1,5 +1,7 @@
 === master
 
+* Allow Warning.clear to take a block, and restore current state after block (splattael) (#18, #20)
+
 * Raise ArgumentError if Warning.process is passed non-String as first argument (splattael) (#17, #19)
 
 === 1.2.1 (2021-10-04)

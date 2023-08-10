@@ -37,7 +37,7 @@ task :default=>[:test, :test_freeze]
 RDOC_OPTS = ['--main', 'README.rdoc', "--quiet", "--line-numbers", "--inline-source", '--title', 'ruby-warning: Add custom processing for warnings']
 
 begin
-  gem 'hanna-nouveau'
+  gem 'hanna'
   RDOC_OPTS.concat(['-f', 'hanna'])
 rescue Gem::LoadError
 end

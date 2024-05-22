@@ -4,8 +4,8 @@ require 'pathname'
 class WarningTest < Minitest::Test
   module EnvUtil
     def verbose_warning
-      stderr = ""
-      class << (stderr = "")
+      stderr = String.new
+      class << stderr
         alias write <<
         def puts(*a)
           self << a.join("\n")
@@ -135,16 +135,16 @@ class WarningTest < Minitest::Test
   def test_warning_dedup
     gvar = ->{$test_warning_dedup}
 
-    assert_warning(/global variable `\$test_warning_dedup' not initialized/) do
+    assert_warning(/global variable [`']\$test_warning_dedup' not initialized/) do
       gvar.call
     end
-    assert_warning(/global variable `\$test_warning_dedup' not initialized/) do
+    assert_warning(/global variable [`']\$test_warning_dedup' not initialized/) do
       gvar.call
     end
 
     Warning.dedup
 
-    assert_warning(/global variable `\$test_warning_dedup' not initialized/) do
+    assert_warning(/global variable [`']\$test_warning_dedup' not initialized/) do
       gvar.call
     end
     assert_warning('') do
@@ -153,33 +153,33 @@ class WarningTest < Minitest::Test
   end
 
   def test_warning_ignore
-    assert_warning(/global variable `\$test_warning_ignore' not initialized/) do
+    assert_warning(/global variable [`']\$test_warning_ignore' not initialized/) do
       assert_nil($test_warning_ignore)
     end
 
-    Warning.ignore(/global variable `\$test_warning_ignore' not initialized/)
+    Warning.ignore(/global variable [`']\$test_warning_ignore' not initialized/)
 
     assert_warning '' do
       assert_nil($test_warning_ignore)
     end
 
-    assert_warning(/global variable `\$test_warning_ignore2' not initialized/) do
+    assert_warning(/global variable [`']\$test_warning_ignore2' not initialized/) do
       assert_nil($test_warning_ignore2)
     end
 
-    Warning.ignore(/global variable `\$test_warning_ignore2' not initialized/, __FILE__)
+    Warning.ignore(/global variable [`']\$test_warning_ignore2' not initialized/, __FILE__)
 
     assert_warning '' do
       assert_nil($test_warning_ignore2)
     end
 
-    assert_warning(/global variable `\$test_warning_ignore3' not initialized/) do
+    assert_warning(/global variable [`']\$test_warning_ignore3' not initialized/) do
       assert_nil($test_warning_ignore3)
     end
 
-    Warning.ignore(/global variable `\$test_warning_ignore3' not initialized/, __FILE__ + 'a')
+    Warning.ignore(/global variable [`']\$test_warning_ignore3' not initialized/, __FILE__ + 'a')
 
-    assert_warning(/global variable `\$test_warning_ignore3' not initialized/) do
+    assert_warning(/global variable [`']\$test_warning_ignore3' not initialized/) do
       assert_nil($test_warning_ignore3)
     end
 
@@ -205,7 +205,7 @@ class WarningTest < Minitest::Test
   end
 
   def test_warning_ignore_missing_gvar
-    assert_warning(/global variable `\$gvar' not initialized/) do
+    assert_warning(/global variable [`']\$gvar' not initialized/) do
       $gvar
     end
 
@@ -338,11 +338,11 @@ class WarningTest < Minitest::Test
   end
 
   def test_warning_ignore_arg_prefix
-    assert_warning(/: warning: `\*' interpreted as argument prefix/) do
+    assert_warning(/: warning: [`']\*' interpreted as argument prefix/) do
       instance_eval('Array *[nil]', __FILE__)
     end
 
-    assert_warning(/: warning: `&' interpreted as argument prefix/) do
+    assert_warning(/: warning: [`']&' interpreted as argument prefix/) do
       instance_eval('tap &proc{}', __FILE__)
     end
     Warning.ignore(:arg_prefix, __FILE__)
@@ -374,16 +374,16 @@ class WarningTest < Minitest::Test
     end
 
     def test_warning_ignore_keyword
-      assert_warning(/warning: Using the last argument as keyword parameters is deprecated; maybe \*\* should be added to the call.*The called method `h2kw' is defined here/m) do
+      assert_warning(/warning: Using the last argument as keyword parameters is deprecated; maybe \*\* should be added to the call.*The called method [`']h2kw' is defined here/m) do
         h2kw({})
       end
-      assert_warning(/warning: Passing the keyword argument as the last hash parameter is deprecated.*The called method `kw2h' is defined here/m) do
+      assert_warning(/warning: Passing the keyword argument as the last hash parameter is deprecated.*The called method [`']kw2h' is defined here/m) do
         kw2h(a: 1)
       end
-      assert_warning(/warning: Splitting the last argument into positional and keyword parameters is deprecated.*The called method `skw' is defined here/m) do
+      assert_warning(/warning: Splitting the last argument into positional and keyword parameters is deprecated.*The called method [`']skw' is defined here/m) do
         skw("b" => 1, a: 2)
       end
-      assert_warning(/warning: Splitting the last argument into positional and keyword parameters is deprecated.*The called method `skw' is defined here/m) do
+      assert_warning(/warning: Splitting the last argument into positional and keyword parameters is deprecated.*The called method [`']skw' is defined here/m) do
         skw({"b" => 1, a: 2})
       end
 
@@ -490,7 +490,7 @@ class WarningTest < Minitest::Test
       warn = [0, warning]
     end
 
-    assert_warning(/global variable `\$test_warning_process' not initialized/) do
+    assert_warning(/global variable [`']\$test_warning_process' not initialized/) do
       $test_warning_process
     end
     assert_nil(warn)
@@ -503,7 +503,7 @@ class WarningTest < Minitest::Test
       $test_warning_process2
     end
     assert_equal(1, warn.first)
-    assert_match(/global variable `\$test_warning_process2' not initialized/, warn.last)
+    assert_match(/global variable [`']\$test_warning_process2' not initialized/, warn.last)
     warn = nil
 
     Warning.process(File.dirname(__FILE__)) do |warning|
@@ -514,7 +514,7 @@ class WarningTest < Minitest::Test
       $test_warning_process3
     end
     assert_equal(1, warn.first)
-    assert_match(/global variable `\$test_warning_process3' not initialized/, warn.last)
+    assert_match(/global variable [`']\$test_warning_process3' not initialized/, warn.last)
     warn = nil
 
     Warning.process(__FILE__+':') do |warning|
@@ -525,12 +525,12 @@ class WarningTest < Minitest::Test
       $test_warning_process4
     end
     assert_equal(3, warn.first)
-    assert_match(/global variable `\$test_warning_process4' not initialized/, warn.last)
+    assert_match(/global variable [`']\$test_warning_process4' not initialized/, warn.last)
     warn = nil
 
     Warning.clear
 
-    assert_warning(/global variable `\$test_warning_process5' not initialized/) do
+    assert_warning(/global variable [`']\$test_warning_process5' not initialized/) do
       $test_warning_process5
     end
     assert_nil(warn)
@@ -543,7 +543,7 @@ class WarningTest < Minitest::Test
       $test_warning_process6
     end
     assert_equal(4, warn.first)
-    assert_match(/global variable `\$test_warning_process6' not initialized/, warn.last)
+    assert_match(/global variable [`']\$test_warning_process6' not initialized/, warn.last)
 
     assert_raises(TypeError) do
       Warning.process('', Object.new=>:raise)
@@ -557,10 +557,10 @@ class WarningTest < Minitest::Test
       :default
     end
 
-    assert_warning(/global variable `\$test_warning_process_block_return_default' not initialized/) do
+    assert_warning(/global variable [`']\$test_warning_process_block_return_default' not initialized/) do
       $test_warning_process_block_return_default
     end
-    assert_match(/global variable `\$test_warning_process_block_return_default' not initialized/, w)
+    assert_match(/global variable [`']\$test_warning_process_block_return_default' not initialized/, w)
   end
 
   def test_warning_process_block_return_backtrace
@@ -570,10 +570,10 @@ class WarningTest < Minitest::Test
       :backtrace
     end
 
-    assert_warning(/global variable `\$test_warning_process_block_return_backtrace' not initialized.*#{__FILE__}/m) do
+    assert_warning(/global variable [`']\$test_warning_process_block_return_backtrace' not initialized.*#{__FILE__}/m) do
       $test_warning_process_block_return_backtrace
     end
-    assert_match(/global variable `\$test_warning_process_block_return_backtrace' not initialized/, w)
+    assert_match(/global variable [`']\$test_warning_process_block_return_backtrace' not initialized/, w)
   end
 
   def test_warning_process_block_return_raise
@@ -586,7 +586,7 @@ class WarningTest < Minitest::Test
     assert_raises(RuntimeError) do
       $test_warning_process_block_return_raise
     end
-    assert_match(/global variable `\$test_warning_process_block_return_raise' not initialized/, w)
+    assert_match(/global variable [`']\$test_warning_process_block_return_raise' not initialized/, w)
   end
 
   def test_warning_process_action
@@ -602,7 +602,7 @@ class WarningTest < Minitest::Test
       end
     end
 
-    assert_warning(/global variable `\$test_warning_process_action' not initialized.*#{__FILE__}/m) do
+    assert_warning(/global variable [`']\$test_warning_process_action' not initialized.*#{__FILE__}/m) do
       $test_warning_process_action
     end
 

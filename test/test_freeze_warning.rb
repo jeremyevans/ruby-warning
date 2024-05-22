@@ -3,7 +3,8 @@ require_relative 'test_helper'
 class WarningFreezeTest < Minitest::Test
   module EnvUtil
     def verbose_warning
-      class << (stderr = "")
+      stderr = String.new
+      class << stderr
         alias write <<
       end
       stderr, $stderr, verbose, $VERBOSE = $stderr, stderr, $VERBOSE, true
@@ -40,14 +41,14 @@ class WarningFreezeTest < Minitest::Test
   def test_warning_ignore
     w = nil
 
-    Warning.ignore(/global variable `\$test_warning_ignore' not initialized/)
+    Warning.ignore(/global variable [`']\$test_warning_ignore' not initialized/)
     Warning.process do |warning|
       w = [4, warning]
     end
     Warning.freeze
 
     assert_raises RuntimeError do
-      Warning.ignore(/global variable `\$test_warning_ignore' not initialized/)
+      Warning.ignore(/global variable [`']\$test_warning_ignore' not initialized/)
     end
     assert_raises RuntimeError do
       Warning.process{|warning| w = [4, warning]}
@@ -62,6 +63,6 @@ class WarningFreezeTest < Minitest::Test
       $test_warning_ignore2
     end
     assert_equal(4, w.first)
-    assert_match(/global variable `\$test_warning_ignore2' not initialized/, w.last)
+    assert_match(/global variable [`']\$test_warning_ignore2' not initialized/, w.last)
   end
 end

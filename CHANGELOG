@@ -1,5 +1,7 @@
 === master
 
+* Add support for :ignored_block warning on Ruby 3.4 (jeremyevans)
+
 * Support new warning format in Ruby 3.4 (jeremyevans)
 
 === 1.3.0 (2022-07-14)

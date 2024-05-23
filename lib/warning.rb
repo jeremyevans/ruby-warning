@@ -8,6 +8,7 @@ module Warning
       arg_prefix: /: warning: [`'][&\*]' interpreted as argument prefix\n\z/,
       bignum: /: warning: constant ::Bignum is deprecated\n\z/,
       fixnum: /: warning: constant ::Fixnum is deprecated\n\z/,
+      ignored_block: /: warning: the block passed to '.+' defined at .+:\d+ may be ignored\n\z/,
       method_redefined: /: warning: method redefined; discarding old .+\n\z|: warning: previous definition of .+ was here\n\z/,
       missing_gvar: /: warning: global variable [`']\$.+' not initialized\n\z/,
       missing_ivar: /: warning: instance variable @.+ not initialized\n\z/,

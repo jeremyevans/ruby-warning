@@ -457,6 +457,24 @@ class WarningTest < Minitest::Test
     end
   end
 
+  def test_warning_ignore_ignored_block
+    Warning.clear
+
+    def self.foo_test_warning_ignore_ignored_block; end
+
+    if RUBY_VERSION >= '3.4'
+      assert_warning(/the block passed to '.*foo_test_warning_ignore_ignored_block' defined at #{__FILE__}:#{__LINE__-3} may be ignored/) do
+        assert_nil(foo_test_warning_ignore_ignored_block{})
+      end
+    end
+
+    Warning.ignore(:ignored_block, __FILE__)
+
+    assert_warning '' do
+      assert_nil(foo_test_warning_ignore_ignored_block{})
+    end
+  end
+
   def test_warning_ignore_symbol_array
     def self.c; end
 

@@ -1,6 +1,6 @@
-=== master
+=== 1.4.0 (2024-05-24)
 
-* Add support for :ignored_block warning on Ruby 3.4 (jeremyevans)
+* Add support for :ignored_block as regexp argument to Warning.ignore (jeremyevans)
 
 * Support new warning format in Ruby 3.4 (jeremyevans)
 

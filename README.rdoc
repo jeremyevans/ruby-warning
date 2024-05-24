@@ -31,6 +31,7 @@ appropriate regexp.  The supported symbols are:
 * :ambiguous_slash
 * :bignum
 * :fixnum
+* :ignored_block
 * :keyword_separation
 * :method_redefined
 * :mismatched_indentations

@@ -14,6 +14,7 @@ module Warning
       missing_ivar: /: warning: instance variable @.+ not initialized\n\z/,
       not_reached: /: warning: statement not reached\n\z/,
       shadow: /: warning: shadowing outer local variable - \w+\n\z/,
+      standard_removal: /: warning: .+?\.rb was loaded from the standard library, but will no longer be part of the default gems starting from Ruby [\d.]+\./,
       unused_var: /: warning: assigned but unused variable - \w+\n\z/,
       useless_operator: /: warning: possibly useless use of [><!=]+ in void context\n\z/,
       keyword_separation: /: warning: (?:Using the last argument (?:for [`'].+' )?as keyword parameters is deprecated; maybe \*\* should be added to the call|Passing the keyword argument (?:for [`'].+' )?as the last hash parameter is deprecated|Splitting the last argument (?:for [`'].+' )?into positional and keyword parameters is deprecated|The called method (?:[`'].+' )?is defined here)\n\z/,
@@ -106,6 +107,7 @@ module Warning
     # :not_reached :: Ignore statement not reached warnings.
     # :safe :: Ignore warnings related to $SAFE and related C-API functions.
     # :shadow :: Ignore warnings related to shadowing outer local variables.
+    # :standard_removal :: Ignore warnings that a gem will be removed from the standard library.
     # :taint :: Ignore warnings related to taint and related methods and C-API functions.
     # :unused_var :: Ignore warnings for unused variables.
     # :useless_operator :: Ignore warnings when using operators such as == and > when the

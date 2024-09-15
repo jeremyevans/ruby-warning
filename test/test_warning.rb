@@ -475,6 +475,27 @@ class WarningTest < Minitest::Test
     end
   end
 
+  def test_warning_standard_removal
+    Warning.clear
+
+    gems_to_check = if RUBY_VERSION >= '3.3' && RUBY_VERSION < '3.4'
+        ['abbrev', 'csv']
+      else
+        nil
+      end
+    return unless gems_to_check
+
+    assert_warning(/gems since Ruby/) do
+      require gem_to_check[0]
+    end
+
+    Warning.ignore(:standard_removal, __FILE__)
+
+    assert_warning '' do
+      require gem_to_check[1]
+    end
+  end
+
   def test_warning_ignore_symbol_array
     def self.c; end
 

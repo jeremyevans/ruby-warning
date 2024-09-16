@@ -1,3 +1,7 @@
+=== master
+
+* Add support for :default_gem_removal as regexp argument to Warning.ignore (jamiemccarthy, jeremyevans) (#24)
+
 === 1.4.0 (2024-05-24)
 
 * Add support for :ignored_block as regexp argument to Warning.ignore (jeremyevans)

@@ -30,6 +30,7 @@ appropriate regexp.  The supported symbols are:
 * :arg_prefix
 * :ambiguous_slash
 * :bignum
+* :default_gem_removal
 * :fixnum
 * :ignored_block
 * :keyword_separation
@@ -40,7 +41,6 @@ appropriate regexp.  The supported symbols are:
 * :not_reached
 * :safe
 * :shadow
-* :standard_removal
 * :taint
 * :unused_var
 * :useless_operator

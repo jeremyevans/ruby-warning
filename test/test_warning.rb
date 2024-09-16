@@ -1,5 +1,7 @@
 require_relative 'test_helper'
 require 'pathname'
+require 'open3'
+require 'rbconfig'
 
 class WarningTest < Minitest::Test
   module EnvUtil
@@ -476,23 +478,12 @@ class WarningTest < Minitest::Test
   end
 
   def test_warning_standard_removal
-    Warning.clear
-
-    gems_to_check = if RUBY_VERSION >= '3.3' && RUBY_VERSION < '3.4'
-        ['abbrev', 'csv']
-      else
-        nil
-      end
-    return unless gems_to_check
-
-    assert_warning(/gems since Ruby/) do
-      require gem_to_check[0]
-    end
-
-    Warning.ignore(:standard_removal, __FILE__)
-
-    assert_warning '' do
-      require gem_to_check[1]
+    suffix = RUBY_VERSION[0..2].sub('.', '')
+    filename = File.join(__dir__, "default_gem_usage_#{suffix}.rb")
+    if File.file?(filename)
+      output, status = Open3.capture2e(RbConfig.ruby, filename)
+      assert_empty output
+      assert_equal status.to_i, 0
     end
   end
 

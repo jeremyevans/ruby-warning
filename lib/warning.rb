@@ -7,6 +7,7 @@ module Warning
       ambiguous_slash: /: warning: ambiguous first argument; put parentheses or a space even after [`']\/' operator\n\z|: warning: ambiguity between regexp and two divisions: wrap regexp in parentheses or add a space after [`']\/' operator\n\z/,
       arg_prefix: /: warning: [`'][&\*]' interpreted as argument prefix\n\z/,
       bignum: /: warning: constant ::Bignum is deprecated\n\z/,
+      default_gem_removal: /: warning: .+? was loaded from the standard library, but will no longer be part of the default gems starting from Ruby [\d.]+\./,
       fixnum: /: warning: constant ::Fixnum is deprecated\n\z/,
       ignored_block: /: warning: the block passed to '.+' defined at .+:\d+ may be ignored\n\z/,
       method_redefined: /: warning: method redefined; discarding old .+\n\z|: warning: previous definition of .+ was here\n\z/,
@@ -14,7 +15,6 @@ module Warning
       missing_ivar: /: warning: instance variable @.+ not initialized\n\z/,
       not_reached: /: warning: statement not reached\n\z/,
       shadow: /: warning: shadowing outer local variable - \w+\n\z/,
-      standard_removal: /: warning: .+?\.rb was loaded from the standard library, but will no longer be part of the default gems starting from Ruby [\d.]+\./,
       unused_var: /: warning: assigned but unused variable - \w+\n\z/,
       useless_operator: /: warning: possibly useless use of [><!=]+ in void context\n\z/,
       keyword_separation: /: warning: (?:Using the last argument (?:for [`'].+' )?as keyword parameters is deprecated; maybe \*\* should be added to the call|Passing the keyword argument (?:for [`'].+' )?as the last hash parameter is deprecated|Splitting the last argument (?:for [`'].+' )?into positional and keyword parameters is deprecated|The called method (?:[`'].+' )?is defined here)\n\z/,
@@ -96,6 +96,8 @@ module Warning
     # :arg_prefix :: Ignore warnings when using * or & as an argument prefix
     # :ambiguous_slash :: Ignore warnings for things like <tt>method /regexp/</tt>
     # :bignum :: Ignore warnings when referencing the ::Bignum constant.
+    # :default_gem_removal :: Ignore warnings that a gem will be removed from the default gems
+    #                         in a future Ruby version.
     # :fixnum :: Ignore warnings when referencing the ::Fixnum constant.
     # :keyword_separation :: Ignore warnings related to keyword argument separation.
     # :method_redefined :: Ignore warnings when defining a method in a class/module where a
@@ -107,7 +109,6 @@ module Warning
     # :not_reached :: Ignore statement not reached warnings.
     # :safe :: Ignore warnings related to $SAFE and related C-API functions.
     # :shadow :: Ignore warnings related to shadowing outer local variables.
-    # :standard_removal :: Ignore warnings that a gem will be removed from the standard library.
     # :taint :: Ignore warnings related to taint and related methods and C-API functions.
     # :unused_var :: Ignore warnings for unused variables.
     # :useless_operator :: Ignore warnings when using operators such as == and > when the

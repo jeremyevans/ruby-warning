@@ -340,11 +340,11 @@ class WarningTest < Minitest::Test
   end
 
   def test_warning_ignore_arg_prefix
-    assert_warning(/: warning: [`']\*' interpreted as argument prefix/) do
+    assert_warning(/: warning: ([`']\*'|ambiguous `\*` has been) interpreted as( an)? argument prefix/) do
       instance_eval('Array *[nil]', __FILE__)
     end
 
-    assert_warning(/: warning: [`']&' interpreted as argument prefix/) do
+    assert_warning(/: warning: ([`']&'|ambiguous `&` has been) interpreted as( an)? argument prefix/) do
       instance_eval('tap &proc{}', __FILE__)
     end
     Warning.ignore(:arg_prefix, __FILE__)

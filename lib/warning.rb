@@ -4,8 +4,8 @@ module Warning
   module Processor
     # Map of symbols to regexps for warning messages to ignore.
     IGNORE_MAP = {
-      ambiguous_slash: /: warning: ambiguous first argument; put parentheses or a space even after [`']\/' operator\n\z|: warning: ambiguity between regexp and two divisions: wrap regexp in parentheses or add a space after [`']\/' operator\n\z/,
-      arg_prefix: /: warning: [`'][&\*]' interpreted as argument prefix\n\z/,
+      ambiguous_slash: /: warning: ambiguous first argument; put parentheses or a space even after [`']\/' operator\n\z|: warning: ambiguity between regexp and two divisions: wrap regexp in parentheses or add a space after [`']\/' operator\n\z|ambiguous `\/`; wrap regexp in parentheses or add a space after `\/` operator\n\z/,
+      arg_prefix: /: warning: ([`'][&\*]'||ambiguous `[\*&]` has been) interpreted as( an)? argument prefix\n\z/,
       bignum: /: warning: constant ::Bignum is deprecated\n\z/,
       default_gem_removal: /: warning: .+? was loaded from the standard library, but will no longer be part of the default gems starting from Ruby [\d.]+\./,
       fixnum: /: warning: constant ::Fixnum is deprecated\n\z/,

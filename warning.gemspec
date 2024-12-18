@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s|
   s.name = 'warning'
-  s.version = '1.4.0'
+  s.version = '1.5.0'
   s.platform = Gem::Platform::RUBY
   s.extra_rdoc_files = ["README.rdoc", "CHANGELOG", "MIT-LICENSE"]
   s.rdoc_options += ["--quiet", "--line-numbers", "--inline-source", '--title', 'ruby-warning: Add custom processing for warnings', '--main', 'README.rdoc']

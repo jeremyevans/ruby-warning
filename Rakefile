@@ -13,12 +13,12 @@ end
 
 desc "Run tests"
 task :test do
-  sh "#{FileUtils::RUBY} -w test/test_warning.rb"
+  sh "#{FileUtils::RUBY} -w #{'-W:strict_unused_block' if RUBY_VERSION >= '3.4'} test/test_warning.rb"
 end
 
 desc "Run tests with frozen Warning"
 task :test_freeze do
-  sh "#{FileUtils::RUBY} -w test/test_freeze_warning.rb"
+  sh "#{FileUtils::RUBY} -w #{'-W:strict_unused_block' if RUBY_VERSION >= '3.4'} test/test_freeze_warning.rb"
 end
 
 desc "Run tests with coverage"

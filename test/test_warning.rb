@@ -606,6 +606,19 @@ class WarningTest < Minitest::Test
     assert_match(/global variable [`']\$test_warning_process_block_return_backtrace' not initialized/, w)
   end
 
+  def test_error_backtrace
+    Warning.process(__FILE__) do |warning|
+      :raise
+    end
+
+    line = __LINE__ + 1
+    error = assert_raises(Warning.error_class) do
+      $test_warning_process_block_return_raise
+    end
+    assert_match(/global variable [`']\$test_warning_process_block_return_raise' not initialized/, error.message)
+    assert_includes error.backtrace.first, "/#{File.basename(__FILE__)}:#{line}:"
+  end
+
   def test_warning_custom_error_class
     error_class_was = Warning.error_class
     Warning.error_class = Class.new(Exception)

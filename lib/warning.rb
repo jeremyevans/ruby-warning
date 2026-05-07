@@ -263,7 +263,7 @@ module Warning
           #{super_}
           $stderr.puts caller
         when :raise
-          raise @error_class, str
+          raise @error_class, str, #{RUBY_VERSION >= '3.4' ? 'caller_locations' : 'caller'}(3..-1)
         else
           # nothing
         end

@@ -32,6 +32,8 @@ module Warning
     }
     private_constant :ACTION_PROC_MAP
 
+    attr_accessor :error_class
+
     # Clear all current ignored warnings, warning processors, and duplicate check cache.
     # Also disables deduplicating warnings if that is currently enabled.
     #
@@ -261,7 +263,7 @@ module Warning
           #{super_}
           $stderr.puts caller
         when :raise
-          raise str
+          raise @error_class, str
         else
           # nothing
         end
@@ -295,6 +297,7 @@ module Warning
   @process = []
   @dedup = false
   @monitor = Monitor.new
+  @error_class = RuntimeError
 
   extend Processor
 end

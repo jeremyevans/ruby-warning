@@ -54,7 +54,8 @@ choosing the longest path prefix that the string starts with.
 
 <tt>Warning.process</tt> blocks can return +:default+ to use the default
 behavior, +:backtrace+ to use the default behavior and also print the backtrace
-or +:raise+ to raise the warning string as a RuntimeError.
+or +:raise+ to raise the warning string as a +RuntimeError+. You can use
+<tt>Warning.error_class=</tt> to override the exception class used.
 
 <tt>Warning.process</tt> can also accept a hash of actions instead of a block,
 with keys being regexps (or symbols supported by <tt>Warning.ignore</tt>) and

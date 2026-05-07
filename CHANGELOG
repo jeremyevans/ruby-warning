@@ -1,3 +1,9 @@
+=== master
+
+* Skip warning's own frame when raising exceptions (byroot) (#27)
+
+* Add Warning.error_class accessor to override class to use when raising warnings as errors (byroot) (#26)
+
 === 1.5.0 (2024-12-18)
 
 * Handle warning formats produced by prism compiler (jeremyevans)

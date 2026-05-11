@@ -1,4 +1,4 @@
-=== master
+=== 1.6.0 (2026-05-11)
 
 * Skip warning's own frame when raising exceptions (byroot) (#27)
 

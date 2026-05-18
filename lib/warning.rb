@@ -208,6 +208,7 @@ module Warning
 
       synchronize do
         @process << [path, block]
+        @process << ["(eval at #{path}", block] if RUBY_VERSION >= '3.3'
         @process.sort_by!(&:first)
         @process.reverse!
       end

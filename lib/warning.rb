@@ -208,24 +208,26 @@ module Warning
 
       synchronize do
         @process << [path, block]
+        # simplecov:disable
         @process << ["(eval at #{path}", block] if RUBY_VERSION >= '3.3'
+        # simplecov:enable
         @process.sort_by!(&:first)
         @process.reverse!
       end
       nil
     end
 
-    # :nocov:
+    # simplecov:disable
     backtrace_locations = RUBY_VERSION >= '3.4' ? 'caller_locations' : 'caller'
-    # :nocov:
+    # simplecov:enable
 
     if RUBY_VERSION >= '3.0'
       method_args = ', category: nil'
       super_ = "category ? super : super(str)"
-    # :nocov:
+    # simplecov:disable
     else
       super_ = "super"
-    # :nocov:
+    # simplecov:enable
     end
 
     class_eval(<<-END, __FILE__, __LINE__+1)

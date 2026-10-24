@@ -313,7 +313,7 @@ class WarningTest < Minitest::Test
     assert_warning '' do
       instance_eval('d /a/', __FILE__)
     end
-  end
+  end if RUBY_VERSION <= '4.1'
 
   def test_warning_ignore_unused_var
     assert_warning(/warning: assigned but unused variable - \w+/) do
@@ -682,10 +682,12 @@ class WarningTest < Minitest::Test
       $test_warning_process_action
     end
 
-    e = assert_raises(RuntimeError) do
-      EnvUtil.verbose_warning{instance_eval('d /a/', __FILE__)}
+    if RUBY_VERSION <= '4.1'
+      e = assert_raises(RuntimeError) do
+        EnvUtil.verbose_warning{instance_eval('d /a/', __FILE__)}
+      end
+      assert_includes(e.message, "warning: ambi")
     end
-    assert_includes(e.message, "warning: ambi")
 
     e = assert_raises(RuntimeError) do
       EnvUtil.verbose_warning{instance_eval('def self.b; return; 1 end', __FILE__)}

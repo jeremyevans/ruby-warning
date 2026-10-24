@@ -580,22 +580,19 @@ class WarningTest < Minitest::Test
     end
   end
 
-  if RUBY_VERSION >= '3.3'
-    def test_warning_process_eval_at
-      skip if RUBY_VERSION
-      warn = nil
-      Warning.process(__FILE__) do |warning|
-        warn = [1, warning]
-      end
-
-      mod = Module.new
-      mod.class_eval <<~RUBY
-        $test_warning_process
-      RUBY
-      assert_equal 1, warn.first
-      assert_match(/global variable [`']\$test_warning_process' not initialized/, warn.last)
+  def test_warning_process_eval_at
+    warn = nil
+    Warning.process(__FILE__) do |warning|
+      warn = [1, warning]
     end
-  end
+
+    mod = Module.new
+    mod.class_eval <<~RUBY
+      $test_warning_process
+    RUBY
+    assert_equal 1, warn.first
+    assert_match(/global variable [`']\$test_warning_process' not initialized/, warn.last)
+  end if RUBY_VERSION >= '3.3'
 
   def test_warning_process_block_return_default
     w = nil
